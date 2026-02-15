@@ -13,7 +13,6 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle global errors here (e.g., redirect to login on 401 if not already handled)
     return Promise.reject(error);
   },
 );

@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 import { CategoriesResponse } from "@/features/medicine/types";
 
 export const categoryService = {

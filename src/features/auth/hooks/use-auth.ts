@@ -1,7 +1,4 @@
-import { authClient } from "@/lib/auth-client";
-
-export const { useSession, useListSessions, useActiveOrganization } =
-  authClient;
+import { useSession } from "@/lib/auth-client";
 
 export const useAuth = () => {
   const session = useSession();

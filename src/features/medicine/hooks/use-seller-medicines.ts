@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { medicineService } from "@/features/medicine/services/medicine.service";
 import { toast } from "sonner";
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 
 export const useSellerMedicines = () => {
   return useQuery({

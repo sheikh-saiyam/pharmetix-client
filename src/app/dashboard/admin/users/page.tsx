@@ -27,6 +27,7 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserRole } from "@/features/auth/schemas/auth.schema";
+import { UserStatus } from "@/types/user.type";
 
 export default function UsersPage() {
   const { data, isLoading } = useUsers();
@@ -66,8 +67,14 @@ export default function UsersPage() {
                   <Badge variant="outline">{user.role}</Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={user.isActive ? "default" : "destructive"}>
-                    {user.isActive ? "Active" : "Banned"}
+                  <Badge
+                    variant={
+                      user.status === UserStatus.ACTIVE
+                        ? "default"
+                        : "destructive"
+                    }
+                  >
+                    {user.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">

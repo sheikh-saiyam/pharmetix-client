@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 
 export interface SellerStats {
   totalOrders: number;

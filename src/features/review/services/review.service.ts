@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 import { z } from "zod";
 
 export const createReviewSchema = z.object({

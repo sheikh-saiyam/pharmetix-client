@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { categoryService } from "@/features/category/services/category.service"; // Need to update service to include mutations
 import { toast } from "sonner";
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 
 // Update service inline or in separate file? I'll extend the hook to call axios directly for now if service is read-only
 // Actually better to update service. I'll update service first in next step or here?

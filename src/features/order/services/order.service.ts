@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 // import { OrderResponse, CreateOrderPayload } from "../types"; // Will define types inline or in separate file
 
 export interface OrderItemPayload {

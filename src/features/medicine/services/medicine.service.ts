@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/axios";
+import { axiosInstance } from "@/lib/axios";
 import { Medicine, MedicineResponse, MedicinesResponse } from "../types";
 
 export const medicineService = {
