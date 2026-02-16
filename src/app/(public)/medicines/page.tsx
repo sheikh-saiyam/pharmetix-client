@@ -70,11 +70,9 @@ export default function MedicinesPage() {
 
   // Construct API params from URL
   const page = Number(searchParams.get("page")) || 1;
-  const limit = 12;
 
   const apiParams: IGetMedicinesParams = {
     page,
-    limit,
     search: searchParams.get("search") || undefined,
     categoryId: searchParams.get("categoryId") || undefined,
     minPrice: searchParams.get("minPrice")
@@ -83,7 +81,7 @@ export default function MedicinesPage() {
     maxPrice: searchParams.get("maxPrice")
       ? Number(searchParams.get("maxPrice"))
       : undefined,
-    isFeatured: searchParams.get("isFeatured") === "true",
+    isFeatured: searchParams.get("isFeatured") === "true" || undefined,
     sortBy: searchParams.get("sortBy") || undefined,
     // manufacturer: searchParams.get("manufacturer") || undefined,
   };
@@ -243,9 +241,7 @@ export default function MedicinesPage() {
             <div className="mt-8">
               <PaginationControl
                 currentPage={Number(data.meta.page)}
-                totalPages={Math.ceil(
-                  (data.meta.total || 0) / (data.meta.limit || 12),
-                )}
+                totalPages={Math.ceil((data.meta.total || 0) / data.meta.limit)}
                 onPageChange={handlePageChange}
               />
             </div>

@@ -4,7 +4,7 @@ export const createOrderSchema = z.object({
   shippingName: z.string().min(1, "Name is required"),
   shippingPhone: z
     .string()
-    .min(1, "Phone is required")
+    .min(1, "Phone number is required")
     .regex(/^\d+$/, "Invalid phone number"),
   shippingAddress: z.string().min(1, "Address is required"),
   shippingCity: z.string().min(1, "City is required"),
@@ -19,4 +19,4 @@ export const createOrderSchema = z.object({
     .min(1, "Order must have at least one item"),
 });
 
-export type CreateOrderSchema = z.infer<typeof createOrderSchema>;
+export type ICreateOrderSchema = z.infer<typeof createOrderSchema>;

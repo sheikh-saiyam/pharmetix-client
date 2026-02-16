@@ -1,4 +1,6 @@
 import { CheckoutForm } from "@/features/order/components/checkout-form";
+import { getSession } from "@/lib/get-session";
+import { IUser } from "@/types/user.type";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,11 +8,12 @@ export const metadata: Metadata = {
   description: "Secure checkout",
 };
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+  const { data: session } = await getSession();
+
   return (
-    <div className="container py-10">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-      <CheckoutForm />
+    <div className="container mx-auto">
+      <CheckoutForm user={session?.user as IUser} />
     </div>
   );
 }

@@ -33,7 +33,12 @@ export default function RootLayout({
         <NextTopLoader color="oklch(0.58 0.23 145)" showSpinner={false} />
         <QueryProvider>
           {children}
-          <Toaster position="top-center" />
+          <Toaster
+            position="top-right"
+            style={{
+              marginTop: "50px",
+            }}
+          />
         </QueryProvider>
       </body>
     </html>

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export function HeroBanner() {
   return (
-    <section className="relative w-full bg-white py-6">
+    <section className="relative w-full bg-white pt-6 pb-12">
       <div className="container mx-auto">
         {/* Main Content Area */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
