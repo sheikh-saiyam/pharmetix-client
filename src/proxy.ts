@@ -9,7 +9,7 @@ import { getSession } from "./lib/get-session";
 const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 const ADMIN_ROUTES = ["/dashboard/admin"];
 const SELLER_ROUTES = ["/dashboard/seller"];
-const CUSTOMER_ROUTES = ["/dashboard/customer"];
+const CUSTOMER_ROUTES = ["/customer"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -54,14 +54,18 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard/seller", request.url));
       }
     }
+  }
 
-    // 6. Protect Customer Routes
-    if (CUSTOMER_ROUTES.some((r) => pathname.startsWith(r))) {
-      if (role !== UserRole.CUSTOMER) {
-        return NextResponse.redirect(
-          new URL("/dashboard/customer", request.url),
-        );
-      }
+  // 6. Protect Customer Routes
+  if (CUSTOMER_ROUTES.some((r) => pathname.startsWith(r))) {
+    if (!sessionToken && !session) {
+      return NextResponse.redirect(new URL("/auth/login", request.url));
+    }
+
+    const role = session?.user.role;
+
+    if (role !== UserRole.CUSTOMER) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
@@ -69,5 +73,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/:path*"],
+  matcher: ["/dashboard/:path*", "/auth/:path*", "/customer/:path*"],
 };

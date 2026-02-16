@@ -22,7 +22,7 @@ export const orderService = {
   },
 
   getMyOrders: async (params?: { limit?: number }) => {
-    const { data } = await axiosInstance.get("/orders", { params });
+    const { data } = await axiosInstance.get("/orders/customer", { params });
     return data;
   },
 
@@ -33,7 +33,7 @@ export const orderService = {
 
   // Seller
   getSellerOrders: async (params?: { status?: string }) => {
-    const { data } = await axiosInstance.get("/seller/orders", { params });
+    const { data } = await axiosInstance.get("/orders/seller", { params });
     return data;
   },
 

@@ -301,7 +301,7 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
                   ? "/dashboard/admin"
                   : user.role === UserRole.SELLER
                     ? "/dashboard/seller"
-                    : "/dashboard/customer"
+                    : "/customer"
               }
               className="flex w-full items-center"
             >

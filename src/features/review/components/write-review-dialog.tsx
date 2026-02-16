@@ -1,12 +1,8 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createReviewSchema,
-  CreateReviewSchema,
-} from "@/features/review/services/review.service";
-import { reviewService } from "@/features/review/services/review.service";
+import { useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,11 +20,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-import { useState } from "react";
-import { Star } from "lucide-react";
+import { reviewService } from "@/features/review/services/review.service";
 import { useQueryClient } from "@tanstack/react-query";
+import { Star } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  createReviewSchema,
+  ICreateReviewSchema,
+} from "../schemas/review.schema";
 
 interface WriteReviewDialogProps {
   medicineId: string;
@@ -44,7 +44,7 @@ export function WriteReviewDialog({
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const form = useForm<CreateReviewSchema>({
+  const form = useForm<ICreateReviewSchema>({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
       medicineId,
@@ -54,7 +54,7 @@ export function WriteReviewDialog({
     },
   });
 
-  async function onSubmit(values: CreateReviewSchema) {
+  async function onSubmit(values: ICreateReviewSchema) {
     try {
       const res = await reviewService.create(values);
       if (res.success) {

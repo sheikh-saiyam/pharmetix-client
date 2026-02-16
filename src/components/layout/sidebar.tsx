@@ -28,13 +28,13 @@ export function Sidebar() {
   const links = [
     {
       title: "Dashboard",
-      href: "/dashboard/customer",
+      href: "/customer",
       icon: LayoutDashboard,
       roles: [UserRole.CUSTOMER],
     },
     {
       title: "My Orders",
-      href: "/dashboard/customer/orders",
+      href: "/customer/orders",
       icon: ShoppingBag,
       roles: [UserRole.CUSTOMER],
     },

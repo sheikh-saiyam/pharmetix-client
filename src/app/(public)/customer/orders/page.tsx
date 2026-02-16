@@ -65,7 +65,7 @@ export default function MyOrdersPage() {
                   <TableCell>৳{order.totalAmount}</TableCell>
                   <TableCell className="text-right">
                     <Button asChild size="sm" variant="outline">
-                      <Link href={`/dashboard/customer/orders/${order.id}`}>
+                      <Link href={`/customer/orders/${order.id}`}>
                         View Details
                       </Link>
                     </Button>

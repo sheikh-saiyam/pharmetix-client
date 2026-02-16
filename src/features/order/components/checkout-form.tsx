@@ -96,7 +96,7 @@ export function CheckoutForm({ user }: { user: IUser }) {
       const response = await orderService.create(values);
       if (response.success) {
         toast.success(`Order placed! Order #${response.data.orderNumber}`);
-        router.push("/dashboard/customer/orders");
+        router.push("/customer/orders");
         router.refresh();
         setTimeout(() => {
           clearCart();
@@ -184,6 +184,7 @@ export function CheckoutForm({ user }: { user: IUser }) {
                           <Input
                             placeholder="email@example.com"
                             value={user?.email}
+                            readOnly
                             className="pl-10 h-12 rounded-xl border-slate-200"
                           />
                         </div>
