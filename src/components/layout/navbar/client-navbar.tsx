@@ -22,13 +22,13 @@ import { useMedicines } from "@/features/medicine/hooks/use-medicines";
 import { ICategory } from "@/features/medicine/medicine.type";
 import { authClient } from "@/lib/auth-client";
 import { useCartStore } from "@/store/cart.store";
-import { IUser } from "@/types/user.type";
+import { IUser, UserRole } from "@/types/user.type";
 import {
   LayoutDashboard,
   LogOut,
   PhoneCall,
   Search,
-  ShoppingBag,
+  Pill,
   ShoppingCart,
   User as UserIcon,
 } from "lucide-react";
@@ -117,7 +117,7 @@ const ClientNavbar = ({
               href="/medicines"
               className="flex items-center gap-2 hover:text-primary font-bold hover:opacity-80"
             >
-              <ShoppingBag className="h-5 w-5 -mt-0.5" />
+              <Pill className="h-5 w-5 -mt-0.5" />
               Medicines
             </Link>
 
@@ -295,7 +295,16 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
             asChild
             className="rounded-md cursor-pointer py-1.5 focus:bg-slate-100"
           >
-            <Link href="/dashboard" className="flex w-full items-center">
+            <Link
+              href={
+                user.role === UserRole.ADMIN
+                  ? "/dashboard/admin"
+                  : user.role === UserRole.SELLER
+                    ? "/dashboard/seller"
+                    : "/dashboard/customer"
+              }
+              className="flex w-full items-center"
+            >
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-50 text-blue-600 mr-2">
                 <LayoutDashboard className="h-2 w-2" />
               </div>

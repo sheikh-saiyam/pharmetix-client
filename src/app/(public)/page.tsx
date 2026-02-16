@@ -10,6 +10,11 @@ import { medicineService } from "@/features/medicine/services/medicine.service";
 export default async function Home() {
   const categories = await categoryService.getAll();
   const reviews = await reviewService.getAll();
+
+  const personalCareMedicines = await medicineService.getAll({
+    page: 2,
+    limit: 4,
+  });
   const otcMedicines = await medicineService.getAll({
     limit: 8,
   });
@@ -29,21 +34,30 @@ export default async function Home() {
         <CategoryGrid categories={categories.data.slice(0, 12)} />
         <ProductShowcase
           title="Especially For You"
-          products={otcMedicines.data}
-          linkHref="/personalized"
-          className="mt-4 bg-blue-50/50 p-6 rounded-xl border border-blue-100/50"
+          products={personalCareMedicines.data}
+          linkHref="/medicines"
+          className="mt-4"
+          barBgColor="bg-blue-500"
+          actionButtonClassname="bg-blue-500 text-white hover:text-white"
+          medicineCardColor="oklch(62.3% 0.214 259.815)"
         />
         <ProductShowcase
           title="OTC Medicines"
           products={otcMedicines.data}
-          linkHref="/otc"
-          className="mt-8 bg-emerald-50/50 p-6 rounded-xl border border-emerald-100/50"
+          linkHref="/medicines"
+          className="mt-8"
+          barBgColor="bg-primary"
+          actionButtonClassname="bg-primary text-white hover:text-white"
+          medicineCardColor="oklch(0.58 0.23 145)"
         />
         <ProductShowcase
           title="Featured Medicines"
           products={featuredMedicines.data}
           linkHref="/medicines?isFeatured=true"
-          className="mt-4 bg-pink-50/50 p-6 rounded-xl border border-pink-100/50"
+          className="mt-4"
+          barBgColor="bg-pink-500"
+          actionButtonClassname="bg-pink-500 text-white hover:text-white"
+          medicineCardColor="oklch(65.6% 0.241 354.308)"
         />
         <ReviewsSection reviews={reviews.data} />
       </main>

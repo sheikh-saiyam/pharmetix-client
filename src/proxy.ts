@@ -23,7 +23,7 @@ export async function proxy(request: NextRequest) {
 
   // 1. If user is logged in and trying to access auth routes, redirect to dashboard
   if (session && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (pathname.startsWith("/dashboard")) {
@@ -69,5 +69,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/auth/:path*"],
 };
