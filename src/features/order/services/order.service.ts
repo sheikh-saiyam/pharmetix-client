@@ -1,56 +1,74 @@
 import { axiosInstance } from "@/lib/axios";
-// import { OrderResponse, CreateOrderPayload } from "../types"; // Will define types inline or in separate file
-
-export interface OrderItemPayload {
-  medicineId: string;
-  quantity: number;
-}
-
-export interface CreateOrderPayload {
-  shippingName: string;
-  shippingPhone: string;
-  shippingAddress: string;
-  shippingCity: string;
-  shippingPostalCode: string;
-  orderItems: OrderItemPayload[];
-}
+import {
+  IMyOrdersResponse,
+  IOrderResponse,
+  OrderItemStatus,
+  OrderStatus,
+  TCreateOrderPayload,
+} from "../order.type";
 
 export const orderService = {
-  create: async (payload: CreateOrderPayload) => {
+  // CUSTOMER
+  create: async (payload: TCreateOrderPayload) => {
     const { data } = await axiosInstance.post("/orders", payload);
     return data;
   },
 
-  getMyOrders: async (params?: { limit?: number }) => {
-    const { data } = await axiosInstance.get("/orders/customer", { params });
+  // CUSTOMER
+  getMyOrders: async (params?: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }) => {
+    const { data } = await axiosInstance.get<IMyOrdersResponse>(
+      "/orders/customer",
+      { params },
+    );
     return data;
   },
 
   getOrderById: async (id: string) => {
-    const { data } = await axiosInstance.get(`/orders/${id}`);
+    const { data } = await axiosInstance.get<IOrderResponse>(`/orders/${id}`);
     return data;
   },
 
-  // Seller
+  // SELLER
   getSellerOrders: async (params?: { status?: string }) => {
     const { data } = await axiosInstance.get("/orders/seller", { params });
     return data;
   },
 
-  updateOrderItemStatus: async (itemId: string, status: string) => {
+  // CUSTOMER
+  cancelOrder: async (id: string) => {
+    const { data } = await axiosInstance.patch(`/orders/cancel-order/${id}`, {
+      status: OrderStatus.CANCELLED,
+    });
+    return data;
+  },
+
+  // ADMIN
+  updateOrder: async (orderId: string, status: OrderStatus) => {
     const { data } = await axiosInstance.patch(
-      `/seller/orders/${itemId}/status`,
+      `/orders/change-status/${orderId}`,
+      {
+        status,
+      },
+    );
+    return data;
+  },
+
+  // SELLER
+  updateOrderItemStatus: async (itemId: string, status: OrderItemStatus) => {
+    const { data } = await axiosInstance.patch(
+      `/orders/item/change-status/${itemId}`,
       { status },
     );
     return data;
   },
 
-  // Admin
+  // ADMIN
   getAllOrders: async (params?: { page?: number; limit?: number }) => {
-    // Standard admin endpoint might be different? Docs say "View all orders". Endpoint: /admin/orders? Or just /orders/all?
-    // Docs: 10 ADMIN CAPABILITIES - Global View: Can see ALL orders.
-    // API: /orders/all?status=CANCELLED in Postman?
-    // Doc: 7. Get All Orders in Postman -> /api/v1/orders/all
     const { data } = await axiosInstance.get("/orders/all", { params });
     return data;
   },

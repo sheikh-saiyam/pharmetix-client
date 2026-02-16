@@ -1,3 +1,5 @@
+import { Skeleton } from "../ui/skeleton";
+
 const PageLoader = () => {
   return (
     <div className="flex justify-center items-center min-h-[400px]">
@@ -6,4 +8,13 @@ const PageLoader = () => {
   );
 };
 
-export { PageLoader };
+const CustomerPageLoader = () => {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-12 w-[200px]" />
+      <Skeleton className="h-[500px] w-full" />
+    </div>
+  );
+};
+
+export { PageLoader, CustomerPageLoader };

@@ -62,7 +62,7 @@ export function CustomerSidebar({ user }: { user: IUser }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full lg:w-64 lg:sticky h-fit top-24 space-y-2">
+    <aside className="w-full lg:w-64 lg:sticky h-fit top-36 space-y-2">
       <div className="bg-white shadow-lg shadow-muted rounded-md border overflow-hidden">
         <div className="p-4 border-b mb-4 flex items-center gap-3">
           <Avatar className="h-10 w-10 border">

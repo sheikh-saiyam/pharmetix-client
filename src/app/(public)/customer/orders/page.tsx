@@ -1,81 +1,111 @@
 "use client";
 
-import { useMyOrders } from "@/features/order/hooks/use-orders";
-import { Badge } from "@/components/ui/badge";
+import CustomerPageHeader from "@/components/layout/customer/customer-header";
+import { Badge, getStatusVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { DataTable } from "@/components/ui/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
+import { useMyOrders } from "@/features/order/hooks/use-orders";
+import { IOrder } from "@/features/order/order.type";
+import { formatCurrency } from "@/lib/utils";
+import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Eye, ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function MyOrdersPage() {
-  const { data, isLoading } = useMyOrders();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>(
+    undefined,
+  );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-[200px]" />
-        <Skeleton className="h-[300px] w-full" />
-      </div>
-    );
-  }
+  const { data, isLoading } = useMyOrders({ page, limit, sortBy, sortOrder });
+
+  const handleSort = (field: string, order: "asc" | "desc") => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
+
+  const columns: ColumnDef<IOrder>[] = [
+    {
+      accessorKey: "orderNumber",
+      header: "Order #",
+      cell: ({ row }) => (
+        <span className="font-medium">{row.getValue("orderNumber")}</span>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Order Date" />
+      ),
+      cell: ({ row }) => {
+        return format(
+          new Date(row.getValue("createdAt")),
+          "MMM d, yyyy, h:mm a",
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as string;
+        return (
+          <Badge variant={getStatusVariant(status).variant}>{status}</Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "totalAmount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Total" />
+      ),
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("totalAmount"));
+
+        return <div className="font-medium">{formatCurrency(amount)}</div>;
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div className="text-right">
+            <Button asChild size="sm" variant="outline" className="shadow-xs">
+              <Link
+                href={`/customer/orders/${order.id}`}
+                className="flex items-center gap-1"
+              >
+                <Eye /> View Details
+              </Link>
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">My Orders</h1>
-      {data?.data?.length === 0 ? (
-        <div className="text-muted-foreground">No orders found.</div>
-      ) : (
-        <div className="border rounded-md">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order #</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead className="text-right">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data?.data?.map((order: any) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">
-                    {order.orderNumber}
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(order.createdAt), "MMM d, yyyy")}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        order.status === "DELIVERED" ? "default" : "secondary"
-                      }
-                    >
-                      {order.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>৳{order.totalAmount}</TableCell>
-                  <TableCell className="text-right">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={`/customer/orders/${order.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <CustomerPageHeader
+        title="My Orders"
+        description="Manage your orders and track your shipments."
+        Icon={ShoppingBag}
+      />
+      <DataTable
+        columns={columns}
+        data={data?.data || []}
+        meta={data?.meta}
+        onPageChange={setPage}
+        onLimitChange={setLimit}
+        onSort={handleSort}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

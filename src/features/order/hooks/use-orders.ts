@@ -3,7 +3,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { orderService } from "@/features/order/services/order.service";
 
-export const useMyOrders = (params?: { limit?: number }) => {
+export const useMyOrders = (params?: {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}) => {
   return useQuery({
     queryKey: ["my-orders", params],
     queryFn: () => orderService.getMyOrders(params),

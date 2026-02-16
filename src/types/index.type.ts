@@ -5,3 +5,9 @@ export interface IMeta {
   limit: number;
   skip: number;
 }
+export interface IFetchParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
