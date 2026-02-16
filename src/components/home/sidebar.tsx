@@ -1,70 +1,72 @@
 "use client";
 
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  HeartPulse,
-  Baby,
-  Sparkles,
-  Stethoscope,
-  Tablet,
-  Thermometer,
-  Trees,
-  User,
-} from "lucide-react";
+import { ICategory } from "@/features/medicine/medicine.type";
+import { cn } from "@/lib/utils";
+import { ChevronRight, Zap } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-export function Sidebar({ className }: React.HTMLAttributes<HTMLDivElement>) {
-  const categories = [
-    { name: "Medicines", icon: Tablet, href: "/medicines" },
-    {
-      name: "Women's Choice",
-      icon: HeartPulse,
-      href: "/category/womens-choice",
-    },
-    { name: "Baby Care", icon: Baby, href: "/category/baby-care" },
-    { name: "Beauty & Care", icon: Sparkles, href: "/category/beauty-care" },
-    {
-      name: "Health & Wellness",
-      icon: Stethoscope,
-      href: "/category/health-wellness",
-    },
-    {
-      name: "Medical Devices",
-      icon: Thermometer,
-      href: "/category/medical-devices",
-    },
-    { name: "Herbal & Homeopathy", icon: Trees, href: "/category/herbal" },
-    { name: "Personal Care", icon: User, href: "/category/personal-care" },
-  ];
-
+export function Sidebar({
+  className,
+  categories,
+}: {
+  className: string;
+  categories: ICategory[];
+}) {
   return (
-    <div className={cn("hidden lg:block w-64 shrink-0 pb-12", className)}>
-      <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            Categories
-          </h2>
-          <ScrollArea className="h-[calc(100vh-10rem)] px-1">
-            <div className="space-y-1 p-2">
-              {categories.map((category) => (
-                <Button
-                  key={category.name}
-                  variant="ghost"
-                  className="w-full justify-start font-normal hover:bg-muted/50 hover:text-primary transition-colors"
-                  asChild
-                >
-                  <Link href={category.href}>
-                    <category.icon className="mr-2 h-4 w-4" />
-                    {category.name}
-                  </Link>
-                </Button>
-              ))}
+    <aside
+      className={cn(
+        "hidden lg:block w-72 border-r border-slate-100 bg-white",
+        className,
+      )}
+    >
+      <div className=" h-screen overflow-auto flex flex-col">
+        <ScrollArea className="flex-1">
+          <div className="flex flex-col">
+            {/* Flash Sale - Static Top Item */}
+            <div className="group flex items-center justify-between px-4 py-4 border-b border-slate-50 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-3">
+                <Zap className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                <span className="font-bold text-slate-900 italic uppercase">
+                  Flash <span className="text-red-500">Sale</span>
+                </span>
+                <span className="ml-2 px-2 py-0.5 rounded-md border border-slate-200 text-[10px] font-bold text-slate-500">
+                  1000+
+                </span>
+              </div>
             </div>
-          </ScrollArea>
-        </div>
+
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/medicines?categoryId=${category.id}`}
+                className="group flex items-center justify-between px-4 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden p-1.5 group-hover:bg-white transition-colors">
+                    {category.image ? (
+                      <Image
+                        src={category.image}
+                        alt={category.name}
+                        width={40}
+                        height={40}
+                        className="h-full w-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-slate-200 animate-pulse rounded-full" />
+                    )}
+                  </div>
+                  <span className="text-[14px] font-medium text-slate-700 group-hover:text-emerald-600 transition-colors">
+                    {category.name}
+                  </span>
+                </div>
+                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-emerald-600 transition-colors" />
+              </Link>
+            ))}
+          </div>
+        </ScrollArea>
       </div>
-    </div>
+    </aside>
   );
 }

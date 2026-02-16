@@ -1,4 +1,6 @@
-export interface Category {
+import { IMeta } from "@/types/index.type";
+
+export interface ICategory {
   id: string;
   name: string;
   slug: string;
@@ -9,7 +11,7 @@ export interface Category {
   };
 }
 
-export interface Medicine {
+export interface IMedicine {
   id: string;
   slug: string;
   brandName: string;
@@ -27,19 +29,19 @@ export interface Medicine {
   isActive: boolean;
   image?: string;
   description?: string;
-  category: Category;
+  category: ICategory;
   seller?: {
     name: string;
     email: string;
   };
-  reviews?: Review[];
+  reviews?: IMedicineReview[];
   _count?: {
     reviews: number;
     orderItems: number;
   };
 }
 
-export interface Review {
+export interface IMedicineReview {
   id: string;
   rating: number;
   comment: string;
@@ -50,33 +52,35 @@ export interface Review {
   createdAt: string;
 }
 
-export interface MedicinesResponse {
+export interface IMedicinesResponse {
   success: boolean;
   message: string;
-  meta: {
-    total: number;
-    page: number;
-    totalPages: number;
-    limit: number;
-    skip: number;
-  };
-  data: Medicine[];
+  meta: IMeta;
+  data: IMedicine[];
 }
 
-export interface MedicineResponse {
+export interface IMedicineResponse {
   success: boolean;
   message: string;
-  data: Medicine;
+  data: IMedicine;
 }
 
-export interface CategoriesResponse {
+export interface ICategoriesResponse {
   success: boolean;
   message: string;
-  meta?: {
-    total: number;
-    page: number;
-    totalPages: number;
-    limit: number;
-  };
-  data: Category[];
+  meta?: IMeta;
+  data: ICategory[];
+}
+
+export interface IGetMedicinesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  manufacturer?: string;
+  categoryId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  isFeatured?: boolean;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }

@@ -1,15 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Medicine } from "@/features/medicine/types";
+import { IMedicine } from "@/features/medicine/medicine.type";
 import { toast } from "sonner";
 
-export interface CartItem extends Medicine {
+export interface CartItem extends IMedicine {
   quantity: number;
 }
 
 interface CartState {
   items: CartItem[];
-  addItem: (medicine: Medicine, quantity?: number) => void;
+  addItem: (medicine: IMedicine, quantity?: number) => void;
   removeItem: (medicineId: string) => void;
   updateQuantity: (medicineId: string, quantity: number) => void;
   clearCart: () => void;

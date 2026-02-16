@@ -1,112 +1,51 @@
-import { Sidebar } from "@/components/home/sidebar";
-import { HeroBanner } from "@/components/home/hero-banner";
 import { CategoryGrid } from "@/components/home/category-grid";
+import { HeroBanner } from "@/components/home/hero-banner";
 import { ProductShowcase } from "@/components/home/product-showcase";
 import { ReviewsSection } from "@/components/home/reviews";
-import { FeaturesSection } from "@/components/home/features-section";
+import { Sidebar } from "@/components/home/sidebar";
+import { categoryService } from "@/features/category/services/category.service";
+import { reviewService } from "@/features/review/services/review.service";
+import { medicineService } from "@/features/medicine/services/medicine.service";
 
-export default function Home() {
-  const genericProducts = [
-    {
-      id: "1",
-      name: "Napa Extend 665mg",
-      category: "Fever & Pain",
-      price: 25,
-      originalPrice: 30,
-      image: "",
-      isNew: true,
-    },
-    {
-      id: "2",
-      name: "Sergel 20mg",
-      category: "Gastric",
-      price: 70,
-      image: "",
-      discount: 10,
-    },
-    { id: "3", name: "Monas 10mg", category: "Asthma", price: 150, image: "" },
-    {
-      id: "4",
-      name: "Tylace",
-      category: "Pain Relief",
-      price: 45,
-      originalPrice: 50,
-      image: "",
-    },
-    {
-      id: "5",
-      name: "Alatrol 10mg",
-      category: "Allergy",
-      price: 35,
-      image: "",
-    },
-  ];
-
-  const otcProducts = [
-    {
-      id: "101",
-      name: "Savlon Antiseptic",
-      category: "First Aid",
-      price: 120,
-      image: "",
-    },
-    {
-      id: "102",
-      name: "Band Aid Box",
-      category: "First Aid",
-      price: 250,
-      image: "",
-    },
-    {
-      id: "103",
-      name: "Dettol Liquid",
-      category: "Antiseptic",
-      price: 95,
-      image: "",
-    },
-    {
-      id: "104",
-      name: "Hexisol Hand Rub",
-      category: "Disinfectant",
-      price: 180,
-      image: "",
-      discount: 15,
-    },
-    {
-      id: "105",
-      name: "Cotton Roll 50g",
-      category: "First Aid",
-      price: 40,
-      image: "",
-    },
-  ];
+export default async function Home() {
+  const categories = await categoryService.getAll();
+  const reviews = await reviewService.getAll();
+  const otcMedicines = await medicineService.getAll({
+    limit: 8,
+  });
+  const featuredMedicines = await medicineService.getAll({
+    isFeatured: true,
+    limit: 4,
+  });
 
   return (
-    <div className="container flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)] gap-6 md:px-6 py-6">
-      <Sidebar className="hidden md:block sticky top-20 self-start" />
-      <main className="flex w-full flex-col overflow-hidden pl-0 md:pl-2">
+    <div className="container mx-auto flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)] md:gap-10">
+      <Sidebar
+        categories={categories.data}
+        className="hidden md:block sticky top-20 self-start"
+      />
+      <main className="mx-auto md:px-6 w-full overflow-hidden">
         <HeroBanner />
-        <FeaturesSection />
-        <CategoryGrid />
+        <CategoryGrid categories={categories.data.slice(0, 12)} />
         <ProductShowcase
           title="Especially For You"
-          products={genericProducts}
+          products={otcMedicines.data}
           linkHref="/personalized"
-          className="mt-4"
+          className="mt-4 bg-blue-50/50 p-6 rounded-xl border border-blue-100/50"
         />
         <ProductShowcase
           title="OTC Medicines"
-          products={otcProducts}
+          products={otcMedicines.data}
           linkHref="/otc"
-          className="mt-4 bg-muted/20 p-6 rounded-xl"
+          className="mt-8 bg-emerald-50/50 p-6 rounded-xl border border-emerald-100/50"
         />
         <ProductShowcase
-          title="Everyday Essentials"
-          products={genericProducts}
-          linkHref="/essentials"
-          className="mt-4"
+          title="Featured Medicines"
+          products={featuredMedicines.data}
+          linkHref="/medicines?isFeatured=true"
+          className="mt-4 bg-pink-50/50 p-6 rounded-xl border border-pink-100/50"
         />
-        <ReviewsSection />
+        <ReviewsSection reviews={reviews.data} />
       </main>
     </div>
   );

@@ -1,23 +1,19 @@
 "use client";
 
-import { Medicine } from "@/features/medicine/types";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { UserRole } from "@/features/auth/schemas/auth.schema";
-import { ShoppingCart } from "lucide-react";
+import { IMedicine } from "@/features/medicine/medicine.type";
+import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart.store";
+import { ShoppingCart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface MedicineCardProps {
-  medicine: Medicine;
+  medicine: IMedicine;
 }
 
 export function MedicineCard({ medicine }: MedicineCardProps) {
@@ -25,61 +21,113 @@ export function MedicineCard({ medicine }: MedicineCardProps) {
   const addItem = useCartStore((state) => state.addItem);
 
   const canAddToCart = !user || user.role === UserRole.CUSTOMER;
+  const isOutOfStock = medicine.stockQuantity <= 0;
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative aspect-square w-full bg-muted/20">
-        <Image
-          src={medicine.image || "/placeholder-medicine.png"}
-          alt={medicine.brandName}
-          fill
-          className="object-cover"
-        />
-        {!medicine.stockQuantity && (
-          <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
-            <Badge variant="destructive">Out of Stock</Badge>
+    <Link href={`/medicines/${medicine.slug}`}>
+      <Card className="group relative h-full flex flex-col border-slate-100 bg-white hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 pt-0 pb-4 overflow-hidden">
+        {/* Image Section */}
+        <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-50 p-4">
+          <Image
+            src={medicine.image || "/placeholder-medicine.png"}
+            alt={medicine.brandName}
+            fill
+            className="object-contain p-6 mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+          />
+
+          {/* Top Badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
+            {medicine.dosageForm && (
+              <Badge
+                variant="secondary"
+                className="bg-white/80 backdrop-blur-sm text-[10px] font-medium uppercase tracking-wider text-slate-500 border-none shadow-sm"
+              >
+                {medicine.dosageForm}
+              </Badge>
+            )}
           </div>
-        )}
-      </div>
-      <CardHeader className="p-4 pb-0">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-bold text-lg leading-tight">
+
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-slate-50/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+              <Badge className="bg-rose-500 hover:bg-rose-500 text-white border-none shadow-lg">
+                Out of Stock
+              </Badge>
+            </div>
+          )}
+        </div>
+
+        {/* Content Section */}
+        <CardContent className="flex flex-col flex-1 px-5 py-0">
+          <div className="mb-2">
+            <p className="text-[12px] font-bold text-primary mb-1 group-hover:text-slate-800">
+              {medicine.manufacturer}
+            </p>
+            <h3 className="font-bold text-slate-800 text-lg leading-tight group-hover:text-primary transition-colors line-clamp-1">
               {medicine.brandName}
             </h3>
-            <p className="text-sm text-muted-foreground">
-              {medicine.genericName}
+            <p className="text-sm italic text-slate-400 line-clamp-1">
+              {medicine.genericName} • {medicine.strength}
             </p>
           </div>
-          <Badge variant="outline" className="text-xs">
-            {medicine.strength}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 flex-1">
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">
-              {medicine.dosageForm}
-            </span>
-            <p className="font-bold text-primary text-xl">৳{medicine.price}</p>
+
+          <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-50">
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-slate-900">
+                  ৳{medicine.price}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">
+                  / {medicine.unit || "Pack"}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              {canAddToCart && !isOutOfStock && (
+                <Button
+                  size="icon"
+                  className="h-9 w-9 rounded-full bg-primary hover:bg-primary shadow-xs shadow-primary transition-all active:scale-95"
+                  onClick={() => addItem(medicine)}
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
+        </CardContent>
+
+        {/* Subtle Stock Indicator Footer */}
+        <div className="flex items-center justify-between px-5">
+          {!isOutOfStock && (
+            <div className="flex items-center gap-1.5">
+              <div
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full",
+                  medicine.stockQuantity < 10
+                    ? "bg-amber-400 animate-pulse"
+                    : "bg-primary",
+                )}
+              />
+              <span className="text-[12px] font-medium text-slate-400 uppercase tracking-tight">
+                {medicine.stockQuantity < 10
+                  ? `Only ${medicine.stockQuantity} left`
+                  : "In Stock"}
+              </span>
+            </div>
+          )}
+
+          {/* <Button
+          asChild
+          variant="secondary"
+          size="icon"
+          className="h-9 w-9 rounded-full bg-slate-100 hover:bg-primaryhover:text-primary border-none transition-colors"
+        >
+          <Link href={`/medicines/${medicine.slug}`}>
+            <Eye className="h-4 w-4" />
+          </Link>
+        </Button> */}
         </div>
-      </CardContent>
-      <CardFooter className="p-4 pt-0 gap-2">
-        <Button asChild variant="outline" className="flex-1">
-          <Link href={`/medicines/${medicine.id}`}>Details</Link>
-        </Button>
-        {canAddToCart && medicine.stockQuantity > 0 && (
-          <Button
-            size="icon"
-            onClick={() => addItem(medicine)}
-            disabled={medicine.stockQuantity <= 0}
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+      </Card>
+    </Link>
   );
 }

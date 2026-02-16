@@ -1,38 +1,35 @@
 import { axiosInstance } from "@/lib/axios";
-import { Medicine, MedicineResponse, MedicinesResponse } from "../types";
+import {
+  IGetMedicinesParams,
+  IMedicine,
+  IMedicineResponse,
+  IMedicinesResponse,
+} from "../medicine.type";
 
 export const medicineService = {
-  getAll: async (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    category?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    sort?: string;
-  }) => {
-    const { data } = await axiosInstance.get<MedicinesResponse>("/medicines", {
+  getAll: async (params?: IGetMedicinesParams) => {
+    const { data } = await axiosInstance.get<IMedicinesResponse>("/medicines", {
       params,
     });
     return data;
   },
 
   getById: async (id: string) => {
-    const { data } = await axiosInstance.get<MedicineResponse>(
+    const { data } = await axiosInstance.get<IMedicineResponse>(
       `/medicines/${id}`,
     );
     return data;
   },
 
   // For seller dashboard
-  getSellerMedicines: async (params?: any) => {
-    const { data } = await axiosInstance.get<MedicinesResponse>("/medicines", {
+  getSellerMedicines: async (params?: IGetMedicinesParams) => {
+    const { data } = await axiosInstance.get<IMedicinesResponse>("/medicines", {
       params,
     });
     return data;
   },
 
-  create: async (payload: Partial<Medicine>) => {
+  create: async (payload: Partial<IMedicine>) => {
     const { data } = await axiosInstance.post("/seller/medicines", payload);
     return data;
   },

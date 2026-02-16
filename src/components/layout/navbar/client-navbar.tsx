@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useMedicines } from "@/features/medicine/hooks/use-medicines";
-import { Category } from "@/features/medicine/types";
+import { ICategory } from "@/features/medicine/medicine.type";
 import { authClient } from "@/lib/auth-client";
+import { useCartStore } from "@/store/cart.store";
 import { IUser } from "@/types/user.type";
 import {
   LayoutDashboard,
@@ -33,7 +34,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -41,11 +42,13 @@ const ClientNavbar = ({
   categories,
   user,
 }: {
-  categories: Category[];
+  categories: ICategory[];
   user: IUser;
 }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const pathName = usePathname();
+  const { items } = useCartStore();
 
   const handleLogout = async () => {
     await authClient.signOut({
@@ -68,12 +71,14 @@ const ClientNavbar = ({
         </Link>
 
         {/* Search Bar Trigger */}
-        <div className="flex-1 max-w-3xl">
-          <SearchDialog
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
-        </div>
+        {pathName != "/medicines" && (
+          <div className="flex-1 max-w-3xl">
+            <SearchDialog
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          </div>
+        )}
 
         {/* Right Actions */}
         <div className="flex items-center gap-6">
@@ -96,7 +101,7 @@ const ClientNavbar = ({
             <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
               <ShoppingCart className="h-7 w-7 text-slate-700" />
               <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                0
+                {items.length}
               </span>
             </div>
           </Link>
@@ -109,10 +114,10 @@ const ClientNavbar = ({
           <div className="flex items-center gap-6">
             {/* Medicines (Replaced Shop by Category) */}
             <Link
-              href="/medicine"
-              className="flex items-center gap-2 text-primary font-bold hover:opacity-80"
+              href="/medicines"
+              className="flex items-center gap-2 hover:text-primary font-bold hover:opacity-80"
             >
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag className="h-5 w-5 -mt-0.5" />
               Medicines
             </Link>
 
@@ -120,7 +125,7 @@ const ClientNavbar = ({
             {categories.map((cat) => (
               <Link
                 key={cat.id}
-                href={`/medicine?category=${cat.slug}`}
+                href={`/medicines?categoryId=${cat.id}`}
                 className="text-slate-600 hover:text-primary transition-colors"
               >
                 {cat.name}
