@@ -81,7 +81,6 @@ export function OrderStatusTracker({ status }: OrderStatusTrackerProps) {
             index < currentStepIndex ||
             (index === currentStepIndex && status === OrderStatus.DELIVERED);
           const isActive = index === currentStepIndex;
-          const isPending = index > currentStepIndex;
 
           return (
             <div
