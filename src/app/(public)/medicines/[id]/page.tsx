@@ -15,9 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { UserRole } from "@/features/auth/schemas/auth.schema";
 import { useMedicine } from "@/features/medicine/hooks/use-medicines";
-import { IMedicineReview } from "@/features/medicine/medicine.type";
 import { ReviewList } from "@/features/review/components/review-list";
-import { IReview } from "@/features/review/review.type";
 import { cn } from "@/lib/utils";
 import { useCartStore } from "@/store/cart.store";
 import {

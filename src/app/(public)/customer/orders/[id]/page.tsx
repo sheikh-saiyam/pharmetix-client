@@ -1,7 +1,6 @@
 "use client";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
-import { Badge, getStatusVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table/data-table";
@@ -16,7 +15,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import {
   ArrowLeft,
-  ArrowRight,
   Calendar,
   CreditCard,
   Hash,
@@ -334,29 +332,30 @@ export default function OrderDetailsPage() {
                 data={order.orderItems}
                 isLoading={false}
               />
-              <div className="flex justify-between p-8 w-full bg-slate-50/30">
-                <div className="flex flex-col space-y-2 w-full">
-                  <div className="flex items-center justify-between gap-10">
-                    <span className="text-slate-800 text-left font-black uppercase tracking-[0.2em] text-xs">
-                      Shipping
-                    </span>
-                    <span className="font-bold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full text-[10px] uppercase">
-                      Free Shipping
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-10">
-                    <span className="text-slate-800 text-left font-black uppercase tracking-[0.2em] text-xs">
+              <div className="p-8 bg-slate-50/30 border-t border-slate-100">
+                <div className="flex flex-col items-end space-y-3">
+                  <div className="flex items-center justify-between w-full max-w-[300px]">
+                    <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                       Subtotal
                     </span>
-                    <span className="font-bold text-slate-600">
+                    <span className="font-bold text-slate-700">
                       {formatCurrency(order.totalAmount)}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-10">
-                    <span className="text-slate-800 text-left font-black uppercase tracking-[0.2em] text-xs">
+                  <div className="flex items-center justify-between w-full max-w-[300px]">
+                    <span className="text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                      Shipping
+                    </span>
+                    <span className="font-bold text-emerald-500 bg-emerald-50 px-3 py-0.5 rounded-full text-[10px] uppercase">
+                      Free Shipping
+                    </span>
+                  </div>
+                  <Separator className="w-full max-w-[300px] bg-slate-200" />
+                  <div className="flex items-center justify-between w-full max-w-[300px]">
+                    <span className="text-slate-800 font-black uppercase tracking-wider text-xs">
                       Grand Total
                     </span>
-                    <span className="font-black text-primary drop-shadow-sm">
+                    <span className="text-xl font-black text-primary">
                       {formatCurrency(order.totalAmount)}
                     </span>
                   </div>

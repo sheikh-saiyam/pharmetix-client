@@ -1,9 +1,17 @@
 "use client";
 
+import DashboardPageHeader from "@/components/shared/dashboard-header";
+import { Badge, getStatusVariant } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 import {
-  useSellerOrders,
-  useUpdateOrderItemStatus,
-} from "@/features/order/hooks/use-seller-orders";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -11,24 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge, getStatusVariant } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { useState } from "react";
-import { DataTable } from "@/components/ui/data-table/data-table";
-import { ColumnDef } from "@tanstack/react-table";
+import {
+  useSellerOrders,
+  useUpdateOrderItemStatus,
+} from "@/features/order/hooks/use-seller-orders";
 import { IOrderItem, OrderItemStatus } from "@/features/order/order.type";
 import useDebounce from "@/hooks/use-debounce";
-import DashboardPageHeader from "@/components/shared/dashboard-header";
-import { ClipboardList, Eye, Package, User, MapPin, Phone } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { ClipboardList, Eye, MapPin, Package, User } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function SellerOrdersPage() {

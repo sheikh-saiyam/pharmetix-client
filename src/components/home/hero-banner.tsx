@@ -99,7 +99,7 @@ export function HeroBanner() {
               <Image
                 src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=1000&auto=format&fit=crop"
                 alt="Healthcare Excellence"
-                className="w-full h-full object-cover opacity-90"
+                className="w-full h-full object-cover opacity-90 select-none"
                 width={1024}
                 height={720}
               />

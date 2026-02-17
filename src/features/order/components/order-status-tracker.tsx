@@ -1,16 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { CheckCircle2, Clock, ShoppingBag, Truck, XCircle } from "lucide-react";
 import { OrderStatus } from "../order.type";
-import {
-  CheckCircle2,
-  CircleDot,
-  Package,
-  Truck,
-  ShoppingBag,
-  XCircle,
-  Clock,
-} from "lucide-react";
 
 interface OrderStatusTrackerProps {
   status: string;

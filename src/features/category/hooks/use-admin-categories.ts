@@ -1,18 +1,8 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { categoryService } from "@/features/category/services/category.service"; // Need to update service to include mutations
-import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
-
-// Update service inline or in separate file? I'll extend the hook to call axios directly for now if service is read-only
-// Actually better to update service. I'll update service first in next step or here?
-// I'll update category.service.ts first.
-
-// Wait, I can't update service in this tool call sequence easily without multiple artifacts.
-// I'll define mutations here calling axios directly for speed, or better, just append to service file.
-// I'll use axios directly in hooks for mutations to save a file edit, or better, just create `admin-category.service.ts`?
-// No, standard `category.service.ts` is fine. I'll update it first.
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
@@ -25,8 +15,11 @@ export const useCreateCategory = () => {
       toast.success("Category created");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: any) =>
-      toast.error(error.response?.data?.message || "Failed to create"),
+    onError: (error) =>
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to create",
+      ),
   });
 };
 
@@ -47,8 +40,11 @@ export const useUpdateCategory = () => {
       toast.success("Category updated");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: any) =>
-      toast.error(error.response?.data?.message || "Failed to update"),
+    onError: (error) =>
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to update",
+      ),
   });
 };
 
@@ -63,7 +59,10 @@ export const useDeleteCategory = () => {
       toast.success("Category deleted");
       queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: any) =>
-      toast.error(error.response?.data?.message || "Failed to delete"),
+    onError: (error) =>
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to delete",
+      ),
   });
 };

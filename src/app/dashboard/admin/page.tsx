@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { IAdminStatsData } from "@/features/dashboard/dashboard.type";
 import { dashboardService } from "@/features/dashboard/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";

@@ -15,8 +15,7 @@ import {
   User,
 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-
-import { Badge, getStatusVariant } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table/data-table";

@@ -21,8 +21,11 @@ export const useUpdateUserStatus = () => {
       toast.success("User status updated");
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update status");
+    onError: (error) => {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to update status",
+      );
     },
   });
 };
@@ -36,8 +39,11 @@ export const useUpdateUserRole = () => {
       toast.success("User role updated");
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update role");
+    onError: (error) => {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to update role",
+      );
     },
   });
 };
@@ -50,8 +56,11 @@ export const useDeleteUser = () => {
       toast.success("User deleted");
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete user");
+    onError: (error) => {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to delete user",
+      );
     },
   });
 };

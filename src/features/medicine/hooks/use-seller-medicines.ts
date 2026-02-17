@@ -20,9 +20,10 @@ export const useCreateMedicine = () => {
       toast.success("Medicine created successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
     },
-    onError: (error: Error | any) => {
+    onError: (error) => {
       toast.error(
-        (error as any).response?.data?.message || "Failed to create medicine",
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to create medicine",
       );
     },
   });
@@ -42,8 +43,11 @@ export const useUpdateMedicine = () => {
       toast.success("Medicine updated successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update medicine");
+    onError: (error) => {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to update medicine",
+      );
     },
   });
 };
@@ -56,8 +60,11 @@ export const useDeleteMedicine = () => {
       toast.success("Medicine deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete medicine");
+    onError: (error) => {
+      toast.error(
+        (error as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Failed to delete medicine",
+      );
     },
   });
 };
