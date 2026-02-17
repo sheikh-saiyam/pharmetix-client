@@ -1,16 +1,10 @@
 import { axiosInstance } from "@/lib/axios";
+import { IAdminStatsResponse } from "../dashboard.type";
 
 export interface SellerStats {
   totalOrders: number;
   totalEarnings: number;
   lowStockMedicines: any[]; // Medicine[]
-}
-
-export interface AdminStats {
-  // Define based on backend response if needed, docs don't specify structure but endpoint exists
-  totalUsers: number;
-  totalOrders: number;
-  totalMedicines: number;
 }
 
 export const dashboardService = {
@@ -23,10 +17,8 @@ export const dashboardService = {
   },
 
   getAdminStats: async () => {
-    const { data } = await axiosInstance.get<{
-      success: boolean;
-      data: AdminStats;
-    }>("/stats/admin");
+    const { data } =
+      await axiosInstance.get<IAdminStatsResponse>("/stats/admin");
     return data;
   },
 };

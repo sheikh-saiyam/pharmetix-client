@@ -3,12 +3,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminService } from "@/features/admin/services/admin.service";
 import { toast } from "sonner";
+import { IGetUsersParams } from "../types/user.type";
 
-export const useUsers = (params?: {
-  page?: number;
-  limit?: number;
-  role?: string;
-}) => {
+export const useUsers = (params?: IGetUsersParams) => {
   return useQuery({
     queryKey: ["users", params],
     queryFn: () => adminService.getUsers(params),

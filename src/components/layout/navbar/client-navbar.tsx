@@ -318,7 +318,14 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
             asChild
             className="rounded-md cursor-pointer py-1.5 focus:bg-slate-100"
           >
-            <Link href="/profile" className="flex w-full items-center">
+            <Link
+              href={
+                user.role === UserRole.CUSTOMER
+                  ? "/customer/profile"
+                  : "/dashboard/profile"
+              }
+              className="flex w-full items-center"
+            >
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-slate-100 text-slate-600 mr-2">
                 <UserIcon className="h-2 w-2" />
               </div>

@@ -1,48 +1,61 @@
 "use client";
 
-import Link from "next/link";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { UserRole } from "@/features/auth/schemas/auth.schema";
 import {
+  ChevronsUpDown,
+  Home,
   LayoutDashboard,
-  ShoppingBag,
-  Package,
-  Users,
   ListOrdered,
-  Star,
-  ShieldAlert,
-  Settings,
+  LogOut,
+  Package,
   Pill,
+  Settings,
+  ShoppingBag,
+  User,
+  Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function Sidebar() {
+import Logo from "@/assets/logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { signOut } from "@/lib/auth-client";
+import { UserRole } from "@/types/user.type";
+
+export function AppSidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
 
   if (!user) return null;
-
   const role = user.role;
 
-  const links = [
+  const managementItems = [
     {
       title: "Dashboard",
-      href: "/customer",
+      href: `/dashboard/${role?.toLowerCase()}`,
       icon: LayoutDashboard,
-      roles: [UserRole.CUSTOMER],
-    },
-    {
-      title: "My Orders",
-      href: "/customer/orders",
-      icon: ShoppingBag,
-      roles: [UserRole.CUSTOMER],
-    },
-    {
-      title: "Dashboard",
-      href: "/dashboard/seller",
-      icon: LayoutDashboard,
-      roles: [UserRole.SELLER],
+      roles: [UserRole.SELLER, UserRole.ADMIN],
     },
     {
       title: "Manage Medicines",
@@ -57,12 +70,6 @@ export function Sidebar() {
       roles: [UserRole.SELLER],
     },
     {
-      title: "Dashboard",
-      href: "/dashboard/admin",
-      icon: LayoutDashboard,
-      roles: [UserRole.ADMIN],
-    },
-    {
       title: "Manage Users",
       href: "/dashboard/admin/users",
       icon: Users,
@@ -74,39 +81,157 @@ export function Sidebar() {
       icon: Package,
       roles: [UserRole.ADMIN],
     },
+  ].filter((item) => item.roles.includes(role as UserRole));
+
+  const publicItems = [
+    { title: "Home", href: "/", icon: Home },
+    { title: "All Medicines", href: "/medicines", icon: Pill },
+    { title: "Shop", href: "/medicines", icon: ShoppingBag },
   ];
 
-  const filteredLinks = links.filter((link) =>
-    link.roles.includes(role as any),
-  );
-
   return (
-    <aside className="w-64 border-r bg-muted/20 min-h-screen p-4">
-      <div className="mb-8 px-4 py-2">
-        <h2 className="text-xl font-bold tracking-tight text-primary">
-          Pharmetix
-        </h2>
-        <p className="text-sm text-muted-foreground capitalize">
-          {role?.toLowerCase()} Panel
-        </p>
-      </div>
-      <nav className="space-y-1">
-        {filteredLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
-              pathname === link.href
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground",
-            )}
-          >
-            <link.icon className="h-4 w-4" />
-            {link.title}
-          </Link>
-        ))}
-      </nav>
-    </aside>
+    <Sidebar collapsible="icon" variant="sidebar" className="border-r">
+      <SidebarHeader>
+        <div className="flex flex-col gap-3 px-4 py-4">
+          <div className="flex items-center justify-center rounded-lg w-full object-cover select-none">
+            <Image
+              src={Logo}
+              alt="Logo"
+              width={1080}
+              height={720}
+              className="rounded-sm w-full h-[60px]"
+            />
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        {/* Management Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarMenu>
+            {managementItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  isActive={pathname === item.href}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        {/* Public Routes Section */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Quick Links</SidebarGroupLabel>
+          <SidebarMenu>
+            {publicItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.title}
+                  isActive={pathname === item.href}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                >
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-slate-200 text-slate-700 font-bold text-xs">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-semibold">
+                      {user.email?.split("@")[0]}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {user.email}
+                    </span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                side="bottom"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-slate-200 text-slate-700 font-bold">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold text-black">
+                        My Account
+                      </span>
+                      <span className="truncate text-sm text-muted-foreground">
+                        {role}
+                      </span>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/profile"
+                      className="cursor-pointer w-full flex items-center"
+                    >
+                      <User className="mr-0.5 size-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/settings"
+                      className="cursor-pointer w-full flex items-center"
+                    >
+                      <Settings className="mr-0.5 size-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="text-destructive cursor-pointer focus:bg-destructive/10 focus:text-destructive"
+                >
+                  <LogOut className="mr-0.5 size-4 mt-0.5 focus:text-destructive" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }

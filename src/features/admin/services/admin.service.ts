@@ -1,12 +1,11 @@
 import { axiosInstance } from "@/lib/axios";
+import { IGetUsersParams, IGetUsersResponse } from "../types/user.type";
 
 export const adminService = {
-  getUsers: async (params?: {
-    page?: number;
-    limit?: number;
-    role?: string;
-  }) => {
-    const { data } = await axiosInstance.get("/users", { params });
+  getUsers: async (params?: IGetUsersParams) => {
+    const { data } = await axiosInstance.get<IGetUsersResponse>("/users", {
+      params,
+    });
     return data;
   },
 
@@ -14,10 +13,6 @@ export const adminService = {
     userId: string,
     payload: { isActive?: boolean; role?: string },
   ) => {
-    // Endpoint might be /users/:id/status or PATCH /users/:id
-    // Docs: 5. Update User Status (Admin) -> PATCH /api/v1/users/:userId/status body: { isActive: boolean }
-    // Docs: 6. Update User Role (Admin) -> PATCH /api/v1/users/:userId/role body: { role: string }
-    // I'll make separate methods or one depending on payload.
     if (payload.isActive !== undefined) {
       const { data } = await axiosInstance.patch(`/users/${userId}/status`, {
         isActive: payload.isActive,

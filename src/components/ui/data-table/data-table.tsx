@@ -27,6 +27,7 @@ import {
 import { IMeta } from "@/types/index.type";
 import { DataTablePagination } from "./data-table-pagination";
 import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +38,7 @@ interface DataTableProps<TData, TValue> {
   onSearch?: (search: string) => void; // Optional search handler
   onSort?: (sortBy: string, sortOrder: "asc" | "desc") => void;
   isLoading?: boolean;
+  renderTopContent?: () => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -48,6 +50,7 @@ export function DataTable<TData, TValue>({
   onSearch,
   onSort,
   isLoading,
+  renderTopContent,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -102,16 +105,29 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {onSearch && (
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Search..."
-            value={globalFilter ?? ""}
-            onChange={(event) => {
-              setGlobalFilter(event.target.value);
-              onSearch(event.target.value);
-            }}
-            className="max-w-sm"
-          />
+        <div className="flex items-center py-4 gap-4">
+          <div className="relative w-full md:max-w-full">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={globalFilter ?? ""}
+              onChange={(event) => {
+                setGlobalFilter(event.target.value);
+                onSearch(event.target.value);
+              }}
+              className="flex-1 pl-8 pr-10"
+            />
+            {globalFilter && (
+              <button
+                onClick={() => setGlobalFilter("")}
+                className="absolute right-1.5 top-1.5 text-slate-500 hover:text-foreground transition-colors p-1 hover:bg-secondary rounded-md"
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {renderTopContent && renderTopContent()}
         </div>
       )}
       <div className="rounded-md border bg-white shadow-xs overflow-hidden">
