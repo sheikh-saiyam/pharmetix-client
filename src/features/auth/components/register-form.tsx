@@ -33,6 +33,9 @@ import {
   RegisterSchema,
   UserRole,
 } from "../schemas/auth.schema";
+import { ImageUploadField } from "@/components/form/image-upload-field";
+import { toast } from "sonner";
+import { UserStatus } from "@/types/user.type";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -45,6 +48,7 @@ export default function RegisterForm() {
       email: "",
       password: "",
       role: UserRole.CUSTOMER,
+      image: "",
     },
   });
 
@@ -57,10 +61,22 @@ export default function RegisterForm() {
         password: values.password,
         name: values.name,
         role: values.role,
+        image: values.image,
+        status: UserStatus.ACTIVE,
       },
       {
         onSuccess: () => {
-          router.push("/auth/login");
+          router.refresh();
+
+          toast.success("Registration successfully completed 🎉", {
+            description: "Welcome to Pharmetix!",
+            duration: 4000,
+          });
+          if (values.role === UserRole.CUSTOMER) {
+            router.push("/customer");
+          } else {
+            router.push("/dashboard/seller");
+          }
         },
         onError: (ctx) => {
           setIsLoading(false);
@@ -159,6 +175,13 @@ export default function RegisterForm() {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <ImageUploadField
+                control={form.control}
+                name="image"
+                label="Profile Picture"
+                previewClassName="rounded-full w-[150px] h-[150px]"
               />
 
               <FormField

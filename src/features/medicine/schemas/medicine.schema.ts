@@ -5,8 +5,8 @@ export const medicineSchema = z.object({
   genericName: z.string().min(1, "Generic name is required"),
   strength: z.string().min(1, "Strength is required"),
   dosageForm: z.string().min(1, "Dosage form is required"), // Could be enum
-  price: z.coerce.number().min(0, "Price must be positive"),
-  stockQuantity: z.coerce.number().min(0, "Stock must be positive"),
+  price: z.number().min(0, "Price must be positive"),
+  stockQuantity: z.number().min(0, "Stock must be positive"),
   categoryId: z.string().min(1, "Category is required"),
   image: z.string().url("Invalid image URL").optional().or(z.literal("")),
   description: z.string().optional(),

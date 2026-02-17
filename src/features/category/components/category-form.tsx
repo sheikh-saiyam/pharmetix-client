@@ -2,7 +2,6 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,15 +17,20 @@ import {
   useUpdateCategory,
 } from "@/features/category/hooks/use-admin-categories";
 
-const categorySchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  image: z.string().url("Invalid URL").optional().or(z.literal("")),
-});
-
-type CategorySchema = z.infer<typeof categorySchema>;
+import { Textarea } from "@/components/ui/textarea";
+import {
+  categorySchema,
+  CategorySchema,
+} from "@/features/category/schemas/category.schema";
+import { ImageUploadField } from "@/components/form/image-upload-field";
 
 interface CategoryFormProps {
-  initialData?: { id: string; name: string; image?: string };
+  initialData?: {
+    id: string;
+    name: string;
+    image?: string;
+    description?: string;
+  };
   onSuccess: () => void;
 }
 
@@ -39,6 +43,7 @@ export function CategoryForm({ initialData, onSuccess }: CategoryFormProps) {
     defaultValues: {
       name: initialData?.name || "",
       image: initialData?.image || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -73,31 +78,47 @@ export function CategoryForm({ initialData, onSuccess }: CategoryFormProps) {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Tablets" {...field} />
+                <Input placeholder="e.g. Tablets, Syrups" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
+        />
+        <ImageUploadField
+          name="image"
+          control={form.control}
+          label="Category Image"
         />
         <FormField
           control={form.control}
-          name="image"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="https://..." {...field} />
+                <Textarea
+                  placeholder="Describe this category..."
+                  className="resize-none"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          disabled={createMutation.isPending || updateMutation.isPending}
-        >
-          {initialData ? "Update" : "Create"}
-        </Button>
+        <div className="flex justify-end pt-4">
+          <Button
+            type="submit"
+            className="w-full md:w-auto"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
+            {createMutation.isPending || updateMutation.isPending
+              ? "Saving..."
+              : initialData
+                ? "Update Category"
+                : "Create Category"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

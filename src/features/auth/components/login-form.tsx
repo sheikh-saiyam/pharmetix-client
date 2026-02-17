@@ -13,7 +13,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleAlert, Loader2, LockKeyhole, Mail } from "lucide-react";
+import {
+  CircleAlert,
+  Loader2,
+  LockKeyhole,
+  Mail,
+  ShieldCheck,
+  Store,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,6 +39,11 @@ export default function LoginForm() {
       password: "",
     },
   });
+
+  const quickLogin = (email: string) => {
+    form.setValue("email", email);
+    form.setValue("password", "password123");
+  };
 
   async function onSubmit(values: LoginSchema) {
     setIsLoading(true);
@@ -70,6 +83,48 @@ export default function LoginForm() {
 
       <div className="p-1">
         <div className="mt-1 p-6 bg-white shadow-lg shadow-muted rounded-[1.4rem]">
+          {/* Quick Login Section */}
+          <div className="mb-6 space-y-3">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+              Quick Login{" "}
+              <span className="text-[10px] font-normal">
+                (For exploration purpose)
+              </span>
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => quickLogin("customer@pharmetix.com")}
+                className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
+              >
+                <User className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+                <span className="text-[10px] font-bold text-slate-500 group-hover:text-primary">
+                  Customer
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => quickLogin("seller@pharmetix.com")}
+                className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
+              >
+                <Store className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+                <span className="text-[10px] font-bold text-slate-500 group-hover:text-primary">
+                  Seller
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => quickLogin("admin@pharmetix.com")}
+                className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
+              >
+                <ShieldCheck className="w-4 h-4 text-slate-400 group-hover:text-primary" />
+                <span className="text-[10px] font-bold text-slate-500 group-hover:text-primary">
+                  Admin
+                </span>
+              </button>
+            </div>
+          </div>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField

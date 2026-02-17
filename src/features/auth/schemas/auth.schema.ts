@@ -19,9 +19,8 @@ export const registerSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters" }),
-  role: z.enum([UserRole.CUSTOMER, UserRole.SELLER], {
-    errorMap: () => ({ message: "Please select a valid role" }),
-  }),
+  role: z.enum([UserRole.CUSTOMER, UserRole.SELLER]),
+  image: z.string().url().optional().or(z.literal("")),
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;

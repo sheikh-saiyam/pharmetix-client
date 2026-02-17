@@ -3,12 +3,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { medicineService } from "@/features/medicine/services/medicine.service";
 import { toast } from "sonner";
-import { axiosInstance } from "@/lib/axios";
+import { IGetMedicinesParams, IMedicine } from "../medicine.type";
 
-export const useSellerMedicines = () => {
+export const useSellerMedicines = (params?: IGetMedicinesParams) => {
   return useQuery({
-    queryKey: ["seller-medicines"],
-    queryFn: () => medicineService.getSellerMedicines(),
+    queryKey: ["seller-medicines", params],
+    queryFn: () => medicineService.getSellerMedicines(params),
   });
 };
 
@@ -20,8 +20,10 @@ export const useCreateMedicine = () => {
       toast.success("Medicine created successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to create medicine");
+    onError: (error: Error | any) => {
+      toast.error(
+        (error as any).response?.data?.message || "Failed to create medicine",
+      );
     },
   });
 };
@@ -29,19 +31,33 @@ export const useCreateMedicine = () => {
 export const useUpdateMedicine = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, payload }: { id: string; payload: any }) => {
-      const { data } = await axiosInstance.patch(
-        `/seller/medicines/${id}`,
-        payload,
-      );
-      return data;
-    },
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Partial<IMedicine>;
+    }) => medicineService.update(id, payload),
     onSuccess: () => {
       toast.success("Medicine updated successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to update medicine");
+    },
+  });
+};
+
+export const useDeleteMedicine = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: medicineService.delete,
+    onSuccess: () => {
+      toast.success("Medicine deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to delete medicine");
     },
   });
 };

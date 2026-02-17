@@ -1,7 +1,9 @@
 import { axiosInstance } from "@/lib/axios";
 import {
+  IGetOrdersParams,
   IMyOrdersResponse,
   IOrderResponse,
+  ISellerOrderItemsResponse,
   OrderItemStatus,
   OrderStatus,
   TCreateOrderPayload,
@@ -34,8 +36,11 @@ export const orderService = {
   },
 
   // SELLER
-  getSellerOrders: async (params?: { status?: string }) => {
-    const { data } = await axiosInstance.get("/orders/seller", { params });
+  getSellerOrders: async (params?: IGetOrdersParams) => {
+    const { data } = await axiosInstance.get<ISellerOrderItemsResponse>(
+      "/orders/seller",
+      { params },
+    );
     return data;
   },
 

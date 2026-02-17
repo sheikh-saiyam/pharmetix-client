@@ -1,22 +1,5 @@
 "use client";
 
-import {
-  ChevronsUpDown,
-  Home,
-  LayoutDashboard,
-  ListOrdered,
-  LogOut,
-  Package,
-  Pill,
-  Settings,
-  ShoppingBag,
-  User,
-  Users,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
 import Logo from "@/assets/logo.png";
 import {
   DropdownMenu,
@@ -42,10 +25,26 @@ import {
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { signOut } from "@/lib/auth-client";
 import { UserRole } from "@/types/user.type";
+import {
+  ChevronsUpDown,
+  Home,
+  LayoutDashboard,
+  ListOrdered,
+  LogOut,
+  Package,
+  Pill,
+  ShoppingBag,
+  User,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const { user } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
 
   if (!user) return null;
   const role = user.role;
@@ -93,7 +92,10 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" variant="sidebar" className="border-r">
       <SidebarHeader>
         <div className="flex flex-col gap-3 px-4 py-4">
-          <div className="flex items-center justify-center rounded-lg w-full object-cover select-none">
+          <Link
+            href="/"
+            className="flex items-center justify-center rounded-lg w-full object-cover select-none"
+          >
             <Image
               src={Logo}
               alt="Logo"
@@ -101,7 +103,7 @@ export function AppSidebar() {
               height={720}
               className="rounded-sm w-full h-[60px]"
             />
-          </div>
+          </Link>
         </div>
       </SidebarHeader>
 
@@ -201,26 +203,21 @@ export function AppSidebar() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem asChild>
                     <Link
-                      href="/profile"
+                      href="/dashboard/profile"
                       className="cursor-pointer w-full flex items-center"
                     >
                       <User className="mr-0.5 size-4" />
                       Profile
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/settings"
-                      className="cursor-pointer w-full flex items-center"
-                    >
-                      <Settings className="mr-0.5 size-4" />
-                      Settings
-                    </Link>
-                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => signOut()}
+                  onClick={() => {
+                    router.push("/");
+                    router.refresh();
+                    signOut();
+                  }}
                   className="text-destructive cursor-pointer focus:bg-destructive/10 focus:text-destructive"
                 >
                   <LogOut className="mr-0.5 size-4 mt-0.5 focus:text-destructive" />

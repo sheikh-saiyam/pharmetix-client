@@ -6,6 +6,7 @@ export interface ICategory {
   slug: string;
   image?: string;
   description?: string;
+  createdAt: string;
   _count?: {
     medicines: number;
   };
@@ -30,6 +31,7 @@ export interface IMedicine {
   image?: string;
   description?: string;
   category: ICategory;
+  createdAt: string;
   seller?: {
     name: string;
     email: string;
@@ -76,6 +78,8 @@ export interface IGetMedicinesParams {
   page?: number;
   limit?: number;
   search?: string;
+  searchTerm?: string;
+  status?: string;
   manufacturer?: string;
   categoryId?: string;
   minPrice?: number;

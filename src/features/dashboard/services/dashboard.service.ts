@@ -1,18 +1,10 @@
 import { axiosInstance } from "@/lib/axios";
-import { IAdminStatsResponse } from "../dashboard.type";
-
-export interface SellerStats {
-  totalOrders: number;
-  totalEarnings: number;
-  lowStockMedicines: any[]; // Medicine[]
-}
+import { IAdminStatsResponse, ISellerStatsResponse } from "../dashboard.type";
 
 export const dashboardService = {
   getSellerStats: async () => {
-    const { data } = await axiosInstance.get<{
-      success: boolean;
-      data: SellerStats;
-    }>("/stats/seller");
+    const { data } =
+      await axiosInstance.get<ISellerStatsResponse>("/stats/seller");
     return data;
   },
 

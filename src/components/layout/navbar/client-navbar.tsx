@@ -260,7 +260,7 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
           className="flex items-center ring-sidebar-ring/50 ring-3 gap-2 px-2 py-4 h-12 hover:bg-slate-100"
         >
           <Avatar className="h-9 w-9 border">
-            <AvatarImage src={user.image || ""} />
+            <AvatarImage src={user.image || ""} className="object-cover" />
             <AvatarFallback>
               {user.name?.charAt(0).toUpperCase()}
             </AvatarFallback>

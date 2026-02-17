@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageUploadField } from "@/components/form/image-upload-field";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +18,6 @@ import { cn } from "@/lib/utils";
 import { IUser, UserRole } from "@/types/user.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, Camera, Mail, ShieldCheck, User } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,7 +32,6 @@ interface ProfileFormProps {
 export function ProfileForm({ user }: ProfileFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [previewImage] = useState<string | null>(user.image || null);
 
   const form = useForm<IProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -47,6 +46,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
     try {
       const { error } = await authClient.updateUser({
         name: data.name,
+        image: data.image,
       });
       if (error) {
         toast.error(error.message || "Failed to update profile");
@@ -67,21 +67,17 @@ export function ProfileForm({ user }: ProfileFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
           {/* Header & Avatar */}
-          <div className="bg-slate-50/50 p-8 rounded-[2.5rem] border border-slate-100">
+          <div className="bg-slate-50/50 rounded-full border border-slate-100">
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="relative">
-                <div className="h-32 w-32 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center">
-                  {previewImage ? (
-                    <Image
-                      src={previewImage}
-                      alt="Profile"
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <User className="h-16 w-16 text-slate-200" />
-                  )}
-                </div>
+                <ImageUploadField
+                  name="image"
+                  control={form.control}
+                  className="h-32 w-32 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center"
+                  previewClassName="h-32 w-32 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center"
+                  noLabel
+                  noPreviewClassName="h-32 w-32 rounded-full bg-white border-4 border-white shadow-md overflow-hidden flex items-center justify-center"
+                />
                 <button
                   type="button"
                   className="absolute bottom-1 right-1 bg-primary/60 hover:bg-primary/70 text-white p-2 rounded-full shadow-md transition-transform active:scale-90"
