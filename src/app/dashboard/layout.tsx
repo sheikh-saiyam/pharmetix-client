@@ -45,7 +45,7 @@ export default function DashboardLayout({
                   const isLast = index === pathSegments.length - 1;
 
                   return (
-                    <React.Fragment key={href}>
+                    <React.Fragment key={`dashboard-breadcrumb-${href}`}>
                       <BreadcrumbItem>
                         {isLast ? (
                           <BreadcrumbPage className="capitalize">

@@ -224,7 +224,7 @@ export default function SellerDashboardPage() {
                 .slice(0, 3)
                 .map((med) => (
                   <div
-                    key={med.id}
+                    key={`seller-dashboard-medicine-id-1-${med.id}`}
                     className="flex items-center justify-between mb-3 last:mb-0"
                   >
                     <div className="text-sm">

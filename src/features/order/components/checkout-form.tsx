@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -46,8 +46,11 @@ export function CheckoutForm({ user }: { user: IUser }) {
   const router = useRouter();
   const { items, clearCart, totalPrice } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [hasHydrated, setHasHydrated] = useState(false);
+  const hasHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const form = useForm<ICreateOrderSchema>({
     resolver: zodResolver(createOrderSchema),
@@ -60,10 +63,6 @@ export function CheckoutForm({ user }: { user: IUser }) {
       orderItems: [],
     },
   });
-
-  useEffect(() => {
-    setHasHydrated(true);
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -373,7 +372,7 @@ export function CheckoutForm({ user }: { user: IUser }) {
                 <div className="flex justify-between items-center text-sm font-medium">
                   <span className="text-slate-500">Delivery Fee</span>
                   <span className="text-slate-900">
-                    <span className="font-extrabold">৳ </span>60
+                    <span className="font-extrabold">৳ </span>0 (FREE)
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm font-medium">

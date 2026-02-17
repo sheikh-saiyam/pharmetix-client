@@ -87,6 +87,13 @@ export interface ISellerOrderItemsResponse {
   data: IOrderItem[];
 }
 
+export interface IAllOrdersResponse {
+  success: boolean;
+  message: string;
+  meta: IMeta;
+  data: IOrder[];
+}
+
 export interface IOrderResponse {
   success: boolean;
   message: string;
@@ -98,7 +105,7 @@ export interface IGetOrdersParams {
   limit?: number;
   search?: string;
   searchTerm?: string;
-  status?: string;
+  status?: string | OrderStatus[];
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }

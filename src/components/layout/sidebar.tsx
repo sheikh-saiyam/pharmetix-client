@@ -75,6 +75,12 @@ export function AppSidebar() {
       roles: [UserRole.ADMIN],
     },
     {
+      title: "Manage Orders",
+      href: "/dashboard/admin/orders",
+      icon: ShoppingBag,
+      roles: [UserRole.ADMIN],
+    },
+    {
       title: "Categories",
       href: "/dashboard/admin/categories",
       icon: Package,

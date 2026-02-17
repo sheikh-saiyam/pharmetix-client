@@ -67,7 +67,7 @@ export function ProductShowcase({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <MedicineCard
-            key={product.id}
+            key={`product-showcase-${product.id}`}
             medicine={product}
             primaryColor={medicineCardColor}
           />

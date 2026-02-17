@@ -149,8 +149,8 @@ export default function CategoriesPage() {
               Add Category
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader className="mt-4 gap-0">
+          <DialogContent className="sm:max-w-[425px] [&>button]:hidden">
+            <DialogHeader className="gap-0">
               <DialogTitle className="text-lg">
                 {editingCategory ? "Edit Category" : "Add New Category"}
               </DialogTitle>

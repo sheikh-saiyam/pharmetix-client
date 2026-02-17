@@ -5,16 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full border border-transparent px-2.5 py-0.5 text-xs font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 overflow-hidden",
+  "inline-flex items-center justify-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 overflow-hidden",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        // --- Standard Shadcn UI Variants ---
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/80 border-transparent",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive: "bg-destructive text-white hover:bg-destructive/80",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-transparent",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/80 border-transparent",
         outline: "text-foreground border-border",
-        // --- Custom Status Variants ---
+
+        // --- Legacy/Generic Semantic Variants (Kept for compatibility) ---
         success:
           "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 border-emerald-200/50",
         warning:
@@ -22,6 +26,20 @@ const badgeVariants = cva(
         info: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 border-blue-200/50",
         error:
           "bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 border-red-200/50",
+
+        // --- New Custom Order Specific Variants ---
+        placed:
+          "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400",
+        processing:
+          "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400",
+        shipped:
+          "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400",
+        delivered:
+          "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400",
+        cancelled:
+          "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400",
+        banned:
+          "bg-slate-900 text-white border-transparent dark:bg-slate-100 dark:text-slate-900",
       },
     },
     defaultVariants: {
@@ -49,32 +67,54 @@ function Badge({ className, variant, asChild = false, ...props }: BadgeProps) {
   );
 }
 
+/**
+ * Maps a status string to a specific badge variant.
+ * Designed to handle both User and Order statuses.
+ */
 const getStatusVariant = (
   status: string,
 ): {
   variant:
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
     | "success"
     | "warning"
     | "info"
     | "error"
-    | "default"
-    | "secondary"
-    | "destructive"
-    | "outline";
+    | "placed"
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "cancelled"
+    | "banned";
 } => {
-  switch (status) {
-    case "ACTIVE":
-    case "DELIVERED":
+  const normalizedStatus = status?.toUpperCase();
+
+  switch (normalizedStatus) {
+    // Order Statuses
     case "PLACED":
-      return { variant: "success" };
+      return { variant: "placed" };
     case "PROCESSING":
+      return { variant: "processing" };
     case "SHIPPED":
-      return { variant: "info" };
+      return { variant: "shipped" };
+    case "DELIVERED":
+      return { variant: "delivered" };
+    case "CANCELLED":
+      return { variant: "cancelled" };
+
+    // User / Account Statuses
+    case "ACTIVE":
+      return { variant: "success" };
     case "INACTIVE":
       return { variant: "secondary" };
-    case "CANCELLED":
     case "BANNED":
+      return { variant: "banned" };
+    case "ERROR":
       return { variant: "error" };
+
     default:
       return { variant: "default" };
   }

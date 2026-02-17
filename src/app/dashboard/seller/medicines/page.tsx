@@ -23,6 +23,7 @@ import DashboardPageHeader from "@/components/shared/dashboard-header";
 import { Package } from "lucide-react";
 import useDebounce from "@/hooks/use-debounce";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 
 export default function SellerMedicinesPage() {
   const [page, setPage] = useState(1);
@@ -86,21 +87,41 @@ export default function SellerMedicinesPage() {
     },
     {
       accessorKey: "price",
-      header: "Price",
-      cell: ({ row }) => <span>৳{row.original.price}</span>,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Price" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          <span className="font-extrabold text-slate-700">৳</span>{" "}
+          {row.original.price}
+        </span>
+      ),
     },
     {
       accessorKey: "expiryDate",
-      header: "Expiry",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Expiry Date" />
+      ),
       cell: ({ row }) => (
         <span>{new Date(row.original.expiryDate).toLocaleDateString()}</span>
       ),
     },
     {
       accessorKey: "createdAt",
-      header: "Created At",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created At" />
+      ),
       cell: ({ row }) => (
         <span>{new Date(row.original.createdAt).toLocaleDateString()}</span>
+      ),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Updated At" />
+      ),
+      cell: ({ row }) => (
+        <span>{new Date(row.original.updatedAt).toLocaleDateString()}</span>
       ),
     },
     {

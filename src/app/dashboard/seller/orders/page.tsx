@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { Badge, getStatusVariant } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { useState } from "react";
 import { DataTable } from "@/components/ui/data-table/data-table";
@@ -29,6 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
+import { toast } from "sonner";
 
 export default function SellerOrdersPage() {
   const [page, setPage] = useState(1);
@@ -126,33 +127,52 @@ export default function SellerOrdersPage() {
       ),
     },
     {
+      id: "view_details",
+      header: () => <div className="text-left">View Details</div>,
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleViewDetails(row.original)}
+        >
+          <Eye className="h-4 w-7 mt-px" /> Details
+        </Button>
+      ),
+    },
+    {
       id: "actions",
-      header: () => <div className="text-right">Actions</div>,
+      header: () => <div className="text-right">Update Status</div>,
       cell: ({ row }) => (
         <div className="text-right flex items-center justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleViewDetails(row.original)}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
           <Select
             defaultValue={row.original.status}
             onValueChange={(val) =>
-              updateStatus.mutate({
-                itemId: row.original.id,
-                status: val as OrderItemStatus,
-              })
+              updateStatus.mutate(
+                {
+                  itemId: row.original.id,
+                  status: val as OrderItemStatus,
+                },
+                {
+                  onSuccess: () => {
+                    toast.success(`Status updated to ${val}`, {
+                      description: `Order Item: ${row.original.id}`,
+                    });
+                  },
+                },
+              )
             }
             disabled={updateStatus.isPending}
           >
-            <SelectTrigger className="w-[130px] h-8 text-xs">
+            <SelectTrigger className="w-[150px] h-8 text-xs font-medium">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((opt) => (
-                <SelectItem key={opt} value={opt} className="text-xs">
+                <SelectItem
+                  key={`order-item-status-00-${opt}`}
+                  value={opt}
+                  className="text-xs font-medium"
+                >
                   {opt}
                 </SelectItem>
               ))}
@@ -188,13 +208,19 @@ export default function SellerOrdersPage() {
         renderTopContent={() => (
           <div className="flex items-center gap-2">
             <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] text-xs font-medium">
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Status</SelectItem>
+                <SelectItem value="ALL" className="text-xs font-medium">
+                  All Status
+                </SelectItem>
                 {statusOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt}>
+                  <SelectItem
+                    key={`order-item-status-1-${opt}`}
+                    value={opt}
+                    className="text-xs font-medium"
+                  >
                     {opt}
                   </SelectItem>
                 ))}
@@ -206,7 +232,7 @@ export default function SellerOrdersPage() {
 
       {/* Details Dialog */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="sm:max-w-3xl [&>button]:hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
@@ -215,69 +241,75 @@ export default function SellerOrdersPage() {
           </DialogHeader>
 
           {selectedItem && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground border-b pb-1">
+            <div className="flex flex-col md:flex-row md:items-center gap-6 pt-4">
+              <div className="space-y-3 w-full md:w-1/2">
+                <h3 className="font-semibold tracking-wide text-slate-800 border-b pb-1">
                   Medicine Information
                 </h3>
-                <Card className="border-none bg-slate-50">
-                  <CardContent className="pt-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Brand Name:</span>
+                <Card className="bg-slate-50 shadow-md border shadow-muted">
+                  <CardContent className="space-y-4">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground font-semibold">
+                        Brand Name:
+                      </span>
                       <span className="font-bold">
                         {selectedItem.medicine.brandName}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground font-semibold">
                         Generic Name:
                       </span>
-                      <span className="italic">
+                      <span className="italic font-medium">
                         {selectedItem.medicine.genericName}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm pt-2 border-t">
-                      <span className="text-muted-foreground">Quantity:</span>
+                    <div className="flex justify-between text-xs pt-2 border-t">
+                      <span className="text-muted-foreground font-semibold">
+                        Quantity:
+                      </span>
                       <span className="font-bold">
                         {selectedItem.quantity} units
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Unit Price:</span>
-                      <span className="font-bold text-primary">
-                        ৳{selectedItem.unitPrice}
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground font-semibold">
+                        Unit Price:
+                      </span>
+                      <span className="font-bold">
+                        <span className="font-extrabold">৳</span>
+                        {selectedItem.unitPrice}
                       </span>
                     </div>
-                    <div className="flex justify-between text-base pt-2 border-t text-primary">
-                      <span className="font-bold">Subtotal:</span>
-                      <span className="font-black">
-                        ৳{selectedItem.subTotal}
+                    <div className="flex justify-between pt-2 text-xs border-t">
+                      <span className="font-semibold text-muted-foreground">
+                        Subtotal:
+                      </span>
+                      <span className="font-black text-xs">
+                        <span className="font-extrabold">৳</span>
+                        {selectedItem.subTotal}
                       </span>
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="font-semibold text-sm uppercase tracking-wider text-muted-foreground border-b pb-1">
+              <div className="space-y-4 w-full md:w-1/2">
+                <h3 className="font-semibold tracking-wide text-slate-800 border-b pb-1">
                   Order & Shipping
                 </h3>
-                <Card className="border-none bg-slate-50">
-                  <CardContent className="pt-4 space-y-3">
+                <Card className="bg-slate-50 shadow-md border shadow-muted">
+                  <CardContent className="space-y-3">
                     <div className="flex items-start gap-3 text-sm">
-                      <User className="h-4 w-4 text-slate-400 mt-0.5" />
+                      <User className="h-4 w-4 text-slate-800 mt-0.5" />
                       <div>
                         <p className="font-medium">
                           {selectedItem.order.shippingName}
                         </p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                          <Phone className="h-3 w-3" />{" "}
-                          {selectedItem.order.shippingPhone}
-                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 text-sm">
-                      <MapPin className="h-4 w-4 text-slate-400 mt-0.5" />
+                      <MapPin className="h-4 w-4 text-slate-800 mt-0.5" />
                       <div>
                         <p className="leading-tight">
                           {selectedItem.order.shippingAddress}
@@ -290,7 +322,7 @@ export default function SellerOrdersPage() {
                     </div>
                     <div className="pt-3 border-t">
                       <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground font-semibold">
                           Order Number:
                         </span>
                         <span className="font-mono">
@@ -298,7 +330,7 @@ export default function SellerOrdersPage() {
                         </span>
                       </div>
                       <div className="flex justify-between text-xs mt-1">
-                        <span className="text-muted-foreground">
+                        <span className="text-muted-foreground font-semibold">
                           Order Date:
                         </span>
                         <span>
@@ -308,15 +340,17 @@ export default function SellerOrdersPage() {
                           )}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-xs text-muted-foreground uppercase tracking-tighter font-bold">
-                          Current Status:
+                      <div className="flex justify-between items-center mt-3">
+                        <span className="text-xs text-muted-foreground tracking-tighter font-semibold">
+                          Current Order Status:
                         </span>
                         <Badge
-                          variant="outline"
+                          variant={
+                            getStatusVariant(selectedItem.order.status).variant
+                          }
                           className="h-5 text-[10px] px-2"
                         >
-                          {selectedItem.status}
+                          {selectedItem.order.status}
                         </Badge>
                       </div>
                     </div>

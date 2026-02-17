@@ -228,9 +228,15 @@ export default function MedicinesPage() {
             >
               {data?.data?.map((medicine) =>
                 view === "grid" ? (
-                  <MedicineCard key={medicine.id} medicine={medicine} />
+                  <MedicineCard
+                    key={`medicine-grid-${medicine.id}`}
+                    medicine={medicine}
+                  />
                 ) : (
-                  <MedicineCardList key={medicine.id} medicine={medicine} />
+                  <MedicineCardList
+                    key={`medicine-list-${medicine.id}`}
+                    medicine={medicine}
+                  />
                 ),
               )}
             </div>

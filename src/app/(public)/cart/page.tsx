@@ -1,5 +1,6 @@
 "use client";
 
+import { PageLoader } from "@/components/layout/loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -7,10 +8,21 @@ import { useCartStore } from "@/store/cart.store";
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } =
     useCartStore();
+
+  const hasHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+
+  if (!hasHydrated) {
+    return <PageLoader />;
+  }
 
   if (items.length === 0) {
     return (
@@ -65,7 +77,7 @@ export default function CartPage() {
         <div className="lg:col-span-8 space-y-6">
           {items.map((item) => (
             <div
-              key={item.id}
+              key={`cart-item-${item.id}`}
               className="group flex flex-col sm:flex-row items-center gap-6 p-4 rounded-3xl border shadow-sm shadow-muted transition-all duration-300"
             >
               {/* Product Image */}

@@ -198,10 +198,10 @@ export default function UsersPage() {
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center gap-2">
               <Select value={role ?? "all"} onValueChange={setRole}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-[150px] text-xs font-medium">
                   <SelectValue placeholder="Filter by Role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-xs font-medium">
                   <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value={UserRole.ADMIN}>Admin</SelectItem>
                   <SelectItem value={UserRole.SELLER}>Seller</SelectItem>
@@ -210,10 +210,10 @@ export default function UsersPage() {
               </Select>
 
               <Select value={status ?? "all"} onValueChange={setStatus}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger className="w-[150px] text-xs font-medium">
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-xs font-medium">
                   <SelectItem value="all">All Status</SelectItem>
                   <SelectItem value={UserStatus.ACTIVE}>Active</SelectItem>
                   <SelectItem value={UserStatus.INACTIVE}>Inactive</SelectItem>

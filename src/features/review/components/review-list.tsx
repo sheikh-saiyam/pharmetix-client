@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { IMedicineReview } from "@/features/medicine/medicine.type";
 import { format } from "date-fns";
-import { IReview } from "../review.type";
+import { Star } from "lucide-react";
 
-export function ReviewList({ reviews }: { reviews?: IReview[] }) {
+export function ReviewList({ reviews }: { reviews?: IMedicineReview[] }) {
   if (!reviews || reviews.length === 0) {
     return <div className="text-muted-foreground">No reviews yet.</div>;
   }

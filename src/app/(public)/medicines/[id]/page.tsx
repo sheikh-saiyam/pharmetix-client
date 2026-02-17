@@ -1,5 +1,25 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/features/auth/hooks/use-auth";
+import { UserRole } from "@/features/auth/schemas/auth.schema";
+import { useMedicine } from "@/features/medicine/hooks/use-medicines";
+import { IMedicineReview } from "@/features/medicine/medicine.type";
+import { ReviewList } from "@/features/review/components/review-list";
+import { IReview } from "@/features/review/review.type";
+import { cn } from "@/lib/utils";
+import { useCartStore } from "@/store/cart.store";
 import {
   ChevronLeft,
   Info,
@@ -12,19 +32,9 @@ import {
   Truck,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { UserRole } from "@/features/auth/schemas/auth.schema";
-import { useMedicine } from "@/features/medicine/hooks/use-medicines";
-import { useCartStore } from "@/store/cart.store";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ReviewList } from "@/features/review/components/review-list";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 export default function MedicineDetailsPage() {
   const params = useParams();
@@ -45,10 +55,10 @@ export default function MedicineDetailsPage() {
   if (isError || !medicine) {
     return (
       <div className="container min-h-[60vh] flex flex-col items-center justify-center py-20 text-center">
-        <div className="bg-slate-50 p-6 rounded-full mb-4">
-          <Info className="h-10 w-10 text-slate-300" />
+        <div className="bg-primary/5 p-6 rounded-full mb-4">
+          <Info className="h-10 w-10 text-primary/30" />
         </div>
-        <h2 className="text-xl font-semibold text-slate-900">
+        <h2 className="text-xl font-semibold text-slate-700">
           Medicine not found
         </h2>
         <p className="text-slate-500 mt-2 max-w-xs mx-auto">
@@ -57,7 +67,7 @@ export default function MedicineDetailsPage() {
         </p>
         <Button
           variant="link"
-          className="mt-4 text-emerald-600"
+          className="mt-4 text-primary/60"
           onClick={() => window.history.back()}
         >
           <ChevronLeft className="h-4 w-4 mr-1" /> Go back to shop
@@ -72,23 +82,29 @@ export default function MedicineDetailsPage() {
     : 0;
 
   return (
-    <div className="bg-[#FCFDFE] min-h-screen pb-20">
-      <div className="container mx-auto px-6">
+    <div className="bg-[#FCFDFE] min-h-screen py-8 pb-20">
+      <div className="mx-auto max-w-7xl px-6">
         {/* Breadcrumb / Navigation */}
         <div className="py-4">
-          <nav className="flex items-center text-sm text-slate-500 mb-4">
-            <Link href="/" className="hover:text-emerald-600">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <Link href="/medicines" className="hover:text-emerald-600">
-              Medicines
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-slate-900 font-medium truncate">
-              {medicine.brandName}
-            </span>
-          </nav>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/">Home</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link href="/medicines">Medicines</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{medicine.brandName}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
 
         <div>
@@ -110,7 +126,7 @@ export default function MedicineDetailsPage() {
                     />
                     {medicine.stockQuantity <= 0 && (
                       <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center">
-                        <Badge className="bg-slate-900 text-white px-6 py-2 rounded-full uppercase tracking-widest">
+                        <Badge className="bg-slate-900 text-white px-6 py-2 rounded-full tracking-widest">
                           Out of Stock
                         </Badge>
                       </div>
@@ -120,21 +136,21 @@ export default function MedicineDetailsPage() {
                   {/* Micro Trust Bar */}
                   <div className="grid grid-cols-3 gap-4 mt-8">
                     <div className="flex flex-col items-center gap-1">
-                      <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
+                      <ShieldCheck className="h-5 w-5 text-primary/50" />
+                      <span className="text-[11px] font-bold text-slate-600 tracking-tighter">
                         Original
                       </span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                      <Truck className="h-5 w-5 text-slate-400" />
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
+                      <Truck className="h-5 w-5 text-slate-600" />
+                      <span className="text-[11px] font-bold text-slate-600 tracking-tighter">
                         Express
                       </span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
-                      <RotateCcw className="h-5 w-5 text-slate-400" />
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
-                        Returns
+                      <RotateCcw className="h-5 w-5 text-slate-600" />
+                      <span className="text-[11px] font-bold text-slate-600 tracking-tighter">
+                        3 Days
                       </span>
                     </div>
                   </div>
@@ -147,11 +163,11 @@ export default function MedicineDetailsPage() {
                   <div className="flex flex-wrap items-center gap-3">
                     <Badge
                       variant="outline"
-                      className="text-emerald-600 border-emerald-100 bg-emerald-50/30 rounded-md"
+                      className="text-primary border-primary/10 bg-primary/5 rounded-md"
                     >
                       {medicine.category.name}
                     </Badge>
-                    <span className="text-[13px] font-medium text-slate-400">
+                    <span className="text-[13px] font-medium text-slate-600">
                       SKU: {medicine.id.slice(0, 8).toUpperCase()}
                     </span>
                   </div>
@@ -184,7 +200,7 @@ export default function MedicineDetailsPage() {
                     <span className="text-sm font-semibold text-slate-900">
                       {averageRating.toFixed(1)}
                     </span>
-                    <span className="text-sm text-slate-400">
+                    <span className="text-sm text-slate-600">
                       ({medicine.reviews?.length || 0} reviews)
                     </span>
                   </div>
@@ -192,9 +208,10 @@ export default function MedicineDetailsPage() {
 
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold text-slate-900">
-                    ৳{medicine.price}
+                    <span className="font-extrabold">৳ </span>
+                    {medicine.price}
                   </span>
-                  <span className="text-slate-400 font-medium">
+                  <span className="text-slate-600 font-medium">
                     / {medicine.unit}
                   </span>
                 </div>
@@ -204,7 +221,7 @@ export default function MedicineDetailsPage() {
                 {/* Specs Grid */}
                 <div className="grid sm:grid-cols-2 gap-y-6 gap-x-12 text-sm">
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-medium uppercase text-[10px] tracking-widest">
+                    <span className="text-slate-600 font-medium text-[12px] tracking-widest">
                       Manufacturer
                     </span>
                     <p className="text-slate-900 font-semibold">
@@ -212,7 +229,7 @@ export default function MedicineDetailsPage() {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-medium uppercase text-[10px] tracking-widest">
+                    <span className="text-slate-600 font-medium text-[12px] tracking-widest">
                       Dosage Form
                     </span>
                     <p className="text-slate-900 font-semibold">
@@ -220,7 +237,7 @@ export default function MedicineDetailsPage() {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-medium uppercase text-[10px] tracking-widest">
+                    <span className="text-slate-600 font-medium text-[12px] tracking-widest">
                       Pack Size
                     </span>
                     <p className="text-slate-900 font-semibold">
@@ -228,14 +245,14 @@ export default function MedicineDetailsPage() {
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <span className="text-slate-400 font-medium uppercase text-[10px] tracking-widest">
+                    <span className="text-slate-600 font-medium text-[12px] tracking-widest">
                       Availability
                     </span>
                     <p
                       className={cn(
                         "font-semibold",
                         medicine.stockQuantity > 0
-                          ? "text-emerald-600"
+                          ? "text-primary"
                           : "text-red-500",
                       )}
                     >
@@ -246,18 +263,6 @@ export default function MedicineDetailsPage() {
                   </div>
                 </div>
 
-                {/* Description Block */}
-                <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
-                  <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
-                    <Info className="h-4 w-4 text-emerald-500" />
-                    Product Description
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    {medicine.description ||
-                      "No detailed description available for this product."}
-                  </p>
-                </div>
-
                 {/* Action Bar */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                   {canAddToCart && (
@@ -266,7 +271,7 @@ export default function MedicineDetailsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="rounded-lg h-full px-3 text-slate-500 hover:text-emerald-600"
+                          className="rounded-lg h-full px-3 text-slate-500 hover:text-primary/60"
                           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                           disabled={quantity <= 1}
                         >
@@ -278,7 +283,7 @@ export default function MedicineDetailsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="rounded-lg h-full px-3 text-slate-500 hover:text-emerald-600"
+                          className="rounded-lg h-full px-3 text-slate-500 hover:text-primary/60"
                           onClick={() =>
                             setQuantity((q) =>
                               Math.min(medicine.stockQuantity, q + 1),
@@ -292,36 +297,47 @@ export default function MedicineDetailsPage() {
 
                       <Button
                         size="lg"
-                        className="w-full sm:flex-1 h-14 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/10 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                        className="w-full sm:flex-1 h-14 bg-primary/60 hover:bg-primary/70 text-white font-bold rounded-xl shadow-lg shadow-primary/60/10 transition-all hover:scale-[1.01] active:scale-[0.99]"
                         disabled={medicine.stockQuantity <= 0}
                         onClick={() =>
                           addItem({ ...medicine, stockQuantity: quantity })
                         }
                       >
                         <ShoppingCart className="mr-2 h-5 w-5" />
-                        Add to Cart — ৳
+                        Add to Cart — <span className="font-extrabold">৳</span>
                         {(medicine.price * quantity).toLocaleString()}
                       </Button>
                     </>
                   )}
+                </div>
+
+                {/* Description Block */}
+                <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-100">
+                  <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <Info className="h-4 w-4 text-primary/50" />
+                    Product Description
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                    {medicine.description ||
+                      "No detailed description available for this product."}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Reviews Section */}
-          <div className="mt-16 max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-2xl font-semibold text-slate-900">
-                Customer Reviews
-              </h2>
-              <div className="h-px flex-1 bg-slate-100 mx-6 hidden sm:block" />
-              <Button variant="outline" className="rounded-full">
-                Write a Review
-              </Button>
+          {medicine.reviews?.length && medicine.reviews.length > 0 && (
+            <div className="mt-16 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-2xl font-semibold text-slate-900">
+                  Customer Reviews
+                </h2>
+                <div className="h-px flex-1 bg-slate-100 mx-6 hidden sm:block" />
+              </div>
+              <ReviewList reviews={medicine.reviews} />
             </div>
-            <ReviewList reviews={medicine.reviews} />
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -330,7 +346,7 @@ export default function MedicineDetailsPage() {
 
 function MedicineDetailsSkeleton() {
   return (
-    <div className="container py-12 animate-pulse">
+    <div className="mx-auto max-w-7xl py-8 pb-20 animate-pulse">
       <div className="bg-white rounded-[2rem] border border-slate-100 h-[600px] grid lg:grid-cols-12 overflow-hidden">
         <div className="lg:col-span-5 p-10 border-r border-slate-50">
           <Skeleton className="aspect-square w-full rounded-2xl" />

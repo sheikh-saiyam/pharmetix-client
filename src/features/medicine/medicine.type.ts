@@ -32,6 +32,7 @@ export interface IMedicine {
   description?: string;
   category: ICategory;
   createdAt: string;
+  updatedAt: string;
   seller?: {
     name: string;
     email: string;

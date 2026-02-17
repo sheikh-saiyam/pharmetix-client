@@ -24,9 +24,8 @@ export const useUpdateOrderItemStatus = () => {
       status: OrderItemStatus;
     }) => orderService.updateOrderItemStatus(itemId, status),
     onSuccess: () => {
-      toast.success("Order status updated");
       queryClient.invalidateQueries({ queryKey: ["seller-orders"] });
-      queryClient.invalidateQueries({ queryKey: ["seller-stats"] }); // Stats might change
+      queryClient.invalidateQueries({ queryKey: ["seller-stats"] });
     },
     onError: (error: unknown) => {
       toast.error(

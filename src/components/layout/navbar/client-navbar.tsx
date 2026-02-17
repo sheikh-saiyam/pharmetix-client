@@ -97,14 +97,26 @@ const ClientNavbar = ({
           </div>
 
           {/* Cart */}
-          <Link href="/cart" className="relative group">
-            <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
-              <ShoppingCart className="h-7 w-7 text-slate-700" />
-              <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                {items.length}
-              </span>
-            </div>
-          </Link>
+          {user && user.role === UserRole.CUSTOMER && (
+            <Link href="/cart" className="relative group">
+              <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+                <ShoppingCart className="h-7 w-7 text-slate-700" />
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {items.length}
+                </span>
+              </div>
+            </Link>
+          )}
+          {!user && (
+            <Link href="/cart" className="relative group">
+              <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+                <ShoppingCart className="h-7 w-7 text-slate-700" />
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {items.length}
+                </span>
+              </div>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -124,7 +136,7 @@ const ClientNavbar = ({
             {/* Dynamic Categories */}
             {categories.map((cat) => (
               <Link
-                key={cat.id}
+                key={`navbar-categories-${cat.id}`}
                 href={`/medicines?categoryId=${cat.id}`}
                 className="text-slate-600 hover:text-primary transition-colors"
               >
@@ -204,7 +216,7 @@ function SearchDialog({
               </h3>
               {searchResults?.data.map((medicine) => (
                 <Link
-                  key={medicine.id}
+                  key={`navbar-search-medicine-${medicine.id}`}
                   href={`/medicine/${medicine.slug}`}
                   className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors border border-transparent hover:border-slate-100"
                 >
