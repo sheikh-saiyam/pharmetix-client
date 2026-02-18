@@ -4,13 +4,13 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("production"),
 
   NEXT_PUBLIC_API_URL: z.string().url(),
-  NEXT_PUBLIC_IMGBB_API_KEY: z.string(),
+  IMGBB_API_KEY: z.string(),
 });
 
 const result = envSchema.safeParse({
   NODE_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-  NEXT_PUBLIC_IMGBB_API_KEY: process.env.NEXT_PUBLIC_IMGBB_API_KEY,
+  IMGBB_API_KEY: process.env.IMGBB_API_KEY,
 });
 
 if (!result.success) {

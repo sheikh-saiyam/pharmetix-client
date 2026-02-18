@@ -10,10 +10,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    const imgbb_api_key = env.NEXT_PUBLIC_IMGBB_API_KEY;
+    const imgbb_api_key = env.IMGBB_API_KEY;
 
     if (!imgbb_api_key) {
-      console.error("NEXT_PUBLIC_IMGBB_API_KEY is not defined");
+      console.error("IMGBB_API_KEY is not defined");
       return NextResponse.json(
         { error: "Image upload configuration error" },
         { status: 500 },
