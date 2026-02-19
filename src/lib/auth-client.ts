@@ -3,6 +3,9 @@ import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL: "https://pharmetix-client.vercel.app",
+  fetchOptions: {
+    credentials: "include",
+  },
   plugins: [
     inferAdditionalFields({
       user: {
