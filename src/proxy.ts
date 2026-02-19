@@ -19,7 +19,8 @@ export async function proxy(request: NextRequest) {
 
   const sessionToken =
     cookieStore.get("better-auth.session_token") ||
-    cookieStore.get("better-auth.session-token");
+    cookieStore.get("better-auth.session-token") ||
+    cookieStore.get("__Secure-better-auth.session_token");
 
   // 1. If user is logged in and trying to access auth routes, redirect to dashboard
   if (session && AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
