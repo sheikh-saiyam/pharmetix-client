@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "launch": "pnpm lint && pnpm build && pnpm start"
+    "launch": "pnpm lint && pnpm build && pnpm start -p 3001"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
