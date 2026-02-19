@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
-
 /**
  * Extract cookies for server-side using next/headers
  */
 export const getServerCookies = async () => {
   if (typeof window !== "undefined") return "";
   try {
+    const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
     return cookieStore
       .getAll()
