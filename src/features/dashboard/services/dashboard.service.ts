@@ -12,7 +12,7 @@ export const dashboardService = {
     const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
 
-    const req = fetch("http://localhost:3000/api/v1/stats/admin", {
+    const req = fetch("/api/v1/stats/admin", {
       headers: {
         "Content-Type": "application/json",
         Cookie: cookieStore
