@@ -20,7 +20,7 @@ export const dashboardService = {
           .map((cookie) => `${cookie.name}=${cookie.value}`)
           .join("; "),
       },
-    });
+    }).then((res) => res.json());
     return req;
   },
 };
