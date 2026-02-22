@@ -9,8 +9,18 @@ export const dashboardService = {
   },
 
   getAdminStats: async () => {
-    const { data } =
-      await axiosInstance.get<IAdminStatsResponse>("/stats/admin");
-    return data;
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+
+    const req = fetch("http://localhost:3000/api/v1/stats/admin", {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore
+          .getAll()
+          .map((cookie) => `${cookie.name}=${cookie.value}`)
+          .join("; "),
+      },
+    });
+    return req;
   },
 };
