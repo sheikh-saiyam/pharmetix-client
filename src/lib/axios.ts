@@ -1,52 +1,31 @@
 import axios from "axios";
 import { env } from "@/env";
+import { getCookies } from "./cookie/cookie";
 
 export const axiosInstance = axios.create({
   baseURL: `${env.NEXT_PUBLIC_API_URL}/api/v1`,
-  withCredentials: true,
+  withCredentials: true, // MUST be true for the browser to send cookies automatically
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Request interceptor to automatically attach cookies on the server
 axiosInstance.interceptors.request.use(
   async (config) => {
-    // Only manually attach cookies if on the server side.
-    // On the client, the browser handles it automatically via withCredentials: true.
-    //
-    // We use headers() from next/headers to read the raw incoming "Cookie" header
-    // and forward it verbatim. This is the most reliable approach on Vercel because:
-    //   1. It forwards ALL cookies exactly as the browser sent them.
-    //   2. It handles the __Secure- prefix used on HTTPS (Vercel production) automatically.
-    //   3. It never fails silently — if there is no cookie header, we simply skip.
+    // ONLY manually attach cookies if we are on the SERVER
     if (typeof window === "undefined") {
-      try {
-        const { headers } = await import("next/headers");
-        const headersList = await headers();
-        const cookieHeader = headersList.get("cookie");
-        if (cookieHeader) {
-          // `config.headers` is a plain object in Node/axios, not a Headers
-          // instance. `.set` will be undefined and throw.  Assign directly
-          // so cookies are forwarded when we issue requests from the server
-          // (e.g. during SSR or in API routes).
-          if (config.headers && typeof config.headers === "object") {
-            // AxiosRequestHeaders type is indexable as string
-            (config.headers as any)["Cookie"] = cookieHeader;
-          }
-        }
-      } catch {
-        // headers() is only available within a Next.js request context.
-        // During static generation or build time this will throw — safe to ignore.
+      const cookieString = await getCookies();
+      
+      if (cookieString) {
+        // Axios 1.x+ prefers .set() for header safety
+        config.headers.set("Cookie", cookieString);
       }
     }
+
+    // On the CLIENT (window !== undefined), we do NOTHING.
+    // The browser sees 'withCredentials: true' and attaches cookies from its own store.
+    
     return config;
   },
-  (error) => Promise.reject(error),
-);
-
-// Response interceptor for global error handling
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error)
 );

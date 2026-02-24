@@ -18,7 +18,7 @@ export const dashboardService = {
         "Content-Type": "application/json",
         Cookie: cookieStore.toString(), // Simplified cookie passing
       },
-      // next: { revalidate: 60 }, // Optional: Next.js caching
+      next: { revalidate: 60 }, // Optional: Next.js caching
     });
 
     if (!response.ok) {
