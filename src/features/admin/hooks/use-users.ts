@@ -16,7 +16,7 @@ export const useUpdateUserStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ userId, isActive }: { userId: string; isActive: boolean }) =>
-      adminService.updateUserStatus(userId, { isActive }),
+      adminService.updateUser(userId, { isActive }),
     onSuccess: () => {
       toast.success("User status updated");
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -34,7 +34,7 @@ export const useUpdateUserRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: string }) =>
-      adminService.updateUserStatus(userId, { role }),
+      adminService.updateUser(userId, { role }),
     onSuccess: () => {
       toast.success("User role updated");
       queryClient.invalidateQueries({ queryKey: ["users"] });
