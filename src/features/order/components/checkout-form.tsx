@@ -22,7 +22,6 @@ import { orderService } from "@/features/order/services/order.service";
 import { useCartStore } from "@/store/cart.store";
 import { IUser } from "@/types/user.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import {
   CircleAlert,
   CreditCardIcon,
@@ -107,17 +106,16 @@ export function CheckoutForm({ user }: { user: IUser }) {
         });
       }
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        form.setError("root", {
-          type: "manual",
-          message: error.response.data.message || "Failed to place order",
-        });
-      } else {
-        form.setError("root", {
-          type: "manual",
-          message: "An unexpected error occurred",
-        });
+      let message = "An unexpected error occurred";
+
+      if (error instanceof Error) {
+        message = error.message;
       }
+
+      form.setError("root", {
+        type: "manual",
+        message,
+      });
     } finally {
       setIsSubmitting(false);
     }

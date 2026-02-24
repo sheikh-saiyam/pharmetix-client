@@ -1,6 +1,6 @@
 "use client";
 
-import { axiosInstance } from "@/lib/axios";
+import { fetchApi } from "@/lib/fetch-api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -8,8 +8,10 @@ export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { name: string; image?: string }) => {
-      const { data } = await axiosInstance.post("/categories", payload);
-      return data;
+      return fetchApi("/categories", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
     },
     onSuccess: () => {
       toast.success("Category created");
@@ -33,8 +35,10 @@ export const useUpdateCategory = () => {
       id: string;
       payload: { name?: string; image?: string };
     }) => {
-      const { data } = await axiosInstance.patch(`/categories/${id}`, payload);
-      return data;
+      return fetchApi(`/categories/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
     },
     onSuccess: () => {
       toast.success("Category updated");
@@ -52,8 +56,9 @@ export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data } = await axiosInstance.delete(`/categories/${id}`);
-      return data;
+      return fetchApi(`/categories/${id}`, {
+        method: "DELETE",
+      });
     },
     onSuccess: () => {
       toast.success("Category deleted");
