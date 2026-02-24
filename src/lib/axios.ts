@@ -26,7 +26,14 @@ axiosInstance.interceptors.request.use(
         const headersList = await headers();
         const cookieHeader = headersList.get("cookie");
         if (cookieHeader) {
-          config.headers.set("Cookie", cookieHeader);
+          // `config.headers` is a plain object in Node/axios, not a Headers
+          // instance. `.set` will be undefined and throw.  Assign directly
+          // so cookies are forwarded when we issue requests from the server
+          // (e.g. during SSR or in API routes).
+          if (config.headers && typeof config.headers === "object") {
+            // AxiosRequestHeaders type is indexable as string
+            (config.headers as any)["Cookie"] = cookieHeader;
+          }
         }
       } catch {
         // headers() is only available within a Next.js request context.
