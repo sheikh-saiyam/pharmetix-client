@@ -22,7 +22,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { dashboardService } from "@/features/dashboard/services/dashboard.service";
+import { getSellerStats } from "@/features/dashboard/services/dashboard.service";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -38,7 +38,7 @@ import { ISellerStatsData } from "@/features/dashboard/dashboard.type";
 export default function SellerDashboardPage() {
   const { data: response, isLoading } = useQuery({
     queryKey: ["seller-stats"],
-    queryFn: dashboardService.getSellerStats,
+    queryFn: async () => getSellerStats(),
   });
 
   const stats: ISellerStatsData | undefined = response?.data;

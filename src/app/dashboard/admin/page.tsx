@@ -12,7 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { IAdminStatsData } from "@/features/dashboard/dashboard.type";
-import { dashboardService } from "@/features/dashboard/services/dashboard.service";
+import { getAdminStats } from "@/features/dashboard/services/dashboard.service";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowDownRight,
@@ -37,7 +37,7 @@ import {
 export default function AdminDashboardPage() {
   const { data: response, isLoading } = useQuery({
     queryKey: ["admin-stats"],
-    queryFn: dashboardService.getAdminStats,
+    queryFn: async () => getAdminStats(),
   });
 
   const stats: IAdminStatsData | undefined = response?.data;

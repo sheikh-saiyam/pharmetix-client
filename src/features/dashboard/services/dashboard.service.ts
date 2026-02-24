@@ -1,30 +1,41 @@
-import { axiosInstance } from "@/lib/axios";
 import { IAdminStatsResponse, ISellerStatsResponse } from "../dashboard.type";
 
+export const getSellerStats = async () => {
+  const response = await fetch("/api/v1/stats/seller", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch seller stats: ${response.statusText}`);
+  }
+
+  const data: ISellerStatsResponse = await response.json();
+  return data;
+};
+
+export const getAdminStats = async () => {
+  const response = await fetch("/api/v1/stats/admin", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch admin stats: ${response.statusText}`);
+  }
+
+  const data: IAdminStatsResponse = await response.json();
+
+  return data;
+};
+
 export const dashboardService = {
-  getSellerStats: async () => {
-    const { data } =
-      await axiosInstance.get<ISellerStatsResponse>("/stats/seller");
-    return data;
-  },
-
-  getAdminStats: async () => {
-    const { cookies } = await import("next/headers");
-    const cookieStore = await cookies();
-
-    const response = await fetch(`/api/v1/stats/admin`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(), // Simplified cookie passing
-      },
-      next: { revalidate: 60 }, // Optional: Next.js caching
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch admin stats: ${response.statusText}`);
-    }
-
-    return response.json();
-  },
+  getSellerStats,
+  getAdminStats,
 };
