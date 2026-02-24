@@ -1,8 +1,8 @@
-import { axiosInstance } from "@/lib/axios";
+import { fetchApi } from "@/lib/fetch-api";
 import {
+  IAllOrdersResponse,
   IGetOrdersParams,
   IMyOrdersResponse,
-  IAllOrdersResponse,
   IOrderResponse,
   ISellerOrderItemsResponse,
   OrderItemStatus,
@@ -13,8 +13,10 @@ import {
 export const orderService = {
   // CUSTOMER
   create: async (payload: TCreateOrderPayload) => {
-    const { data } = await axiosInstance.post("/orders", payload);
-    return data;
+    return fetchApi<IOrderResponse>("/api/v1/orders", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   // CUSTOMER
@@ -24,61 +26,57 @@ export const orderService = {
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }) => {
-    const { data } = await axiosInstance.get<IMyOrdersResponse>(
-      "/orders/customer",
-      { params },
-    );
-    return data;
+    return fetchApi<IMyOrdersResponse>("/api/v1/orders/customer", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 
   getOrderById: async (id: string) => {
-    const { data } = await axiosInstance.get<IOrderResponse>(`/orders/${id}`);
-    return data;
+    return fetchApi<IOrderResponse>(`/api/v1/orders/${id}`, {
+      method: "GET",
+    });
   },
 
   // SELLER
   getSellerOrders: async (params?: IGetOrdersParams) => {
-    const { data } = await axiosInstance.get<ISellerOrderItemsResponse>(
-      "/orders/seller",
-      { params },
-    );
-    return data;
+    return fetchApi<ISellerOrderItemsResponse>("/api/v1/orders/seller", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 
   // CUSTOMER
   cancelOrder: async (id: string) => {
-    const { data } = await axiosInstance.patch(`/orders/cancel-order/${id}`, {
-      status: OrderStatus.CANCELLED,
+    return fetchApi<IOrderResponse>(`/api/v1/orders/cancel-order/${id}`, {
+      method: "PATCH",
     });
-    return data;
   },
 
   // ADMIN
   updateOrder: async (orderId: string, status: OrderStatus) => {
-    const { data } = await axiosInstance.patch(
-      `/orders/change-status/${orderId}`,
-      {
-        status,
-      },
-    );
-    return data;
+    return fetchApi<IOrderResponse>(`/api/v1/orders/change-status/${orderId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    });
   },
 
   // SELLER
   updateOrderItemStatus: async (itemId: string, status: OrderItemStatus) => {
-    const { data } = await axiosInstance.patch(
-      `/orders/item/change-status/${itemId}`,
-      { status },
+    return fetchApi<IOrderResponse>(
+      `/api/v1/orders/item/change-status/${itemId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      },
     );
-    return data;
   },
 
   // ADMIN
   getAllOrders: async (params?: IGetOrdersParams) => {
-    const { data } = await axiosInstance.get<IAllOrdersResponse>(
-      "/orders/all",
-      { params },
-    );
-    return data;
+    return fetchApi<IAllOrdersResponse>("/api/v1/orders/all", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 };

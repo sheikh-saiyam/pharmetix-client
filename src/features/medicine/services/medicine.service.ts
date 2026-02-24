@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios";
+import { fetchApi } from "@/lib/fetch-api";
 import {
   IGetMedicinesParams,
   IMedicine,
@@ -8,42 +8,43 @@ import {
 
 export const medicineService = {
   getAll: async (params?: IGetMedicinesParams) => {
-    const { data } = await axiosInstance.get<IMedicinesResponse>("/medicines", {
-      params,
+    return fetchApi<IMedicinesResponse>("/api/v1/medicines", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
     });
-    return data;
   },
 
   getById: async (id: string) => {
-    const { data } = await axiosInstance.get<IMedicineResponse>(
-      `/medicines/${id}`,
-    );
-    return data;
+    return fetchApi<IMedicineResponse>(`/api/v1/medicines/${id}`, {
+      method: "GET",
+    });
   },
 
   // For seller dashboard
   getSellerMedicines: async (params?: IGetMedicinesParams) => {
-    const { data } = await axiosInstance.get<IMedicinesResponse>(
-      "/medicines/seller",
-      {
-        params,
-      },
-    );
-    return data;
+    return fetchApi<IMedicinesResponse>("/api/v1/medicines/seller", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
+    });
   },
 
   create: async (payload: Partial<IMedicine>) => {
-    const { data } = await axiosInstance.post("/seller/medicines", payload);
-    return data;
+    return fetchApi<IMedicine>("/api/v1/seller/medicines", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 
   update: async (id: string, payload: Partial<IMedicine>) => {
-    const { data } = await axiosInstance.patch(`/medicines/${id}`, payload);
-    return data;
+    return fetchApi<IMedicine>(`/api/v1/medicines/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
   },
 
   delete: async (id: string) => {
-    const { data } = await axiosInstance.delete(`/medicines/${id}`);
-    return data;
+    return fetchApi<IMedicine>(`/api/v1/medicines/${id}`, {
+      method: "DELETE",
+    });
   },
 };

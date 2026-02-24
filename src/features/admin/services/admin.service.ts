@@ -1,34 +1,35 @@
-import { axiosInstance } from "@/lib/axios";
-import { IGetUsersParams, IGetUsersResponse } from "../types/user.type";
+import { fetchApi } from "@/lib/fetch-api";
+import { IGetUsersParams } from "../types/user.type";
 
 export const adminService = {
   getUsers: async (params?: IGetUsersParams) => {
-    const { data } = await axiosInstance.get<IGetUsersResponse>("/users", {
-      params,
+    return fetchApi("/api/v1/users", {
+      method: "GET",
+      params: params as Record<string, string | number | boolean | undefined>,
     });
-    return data;
   },
 
-  updateUserStatus: async (
+  updateUser: async (
     userId: string,
     payload: { isActive?: boolean; role?: string },
   ) => {
     if (payload.isActive !== undefined) {
-      const { data } = await axiosInstance.patch(`/users/${userId}/status`, {
-        isActive: payload.isActive,
+      return fetchApi(`/api/v1/users/${userId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ isActive: payload.isActive }),
       });
-      return data;
     }
     if (payload.role !== undefined) {
-      const { data } = await axiosInstance.patch(`/users/${userId}/role`, {
-        role: payload.role,
+      return fetchApi(`/api/v1/users/${userId}/role`, {
+        method: "PATCH",
+        body: JSON.stringify({ role: payload.role }),
       });
-      return data;
     }
   },
 
   deleteUser: async (userId: string) => {
-    const { data } = await axiosInstance.delete(`/users/${userId}`);
-    return data;
+    return fetchApi(`/api/v1/users/${userId}`, {
+      method: "DELETE",
+    });
   },
 };

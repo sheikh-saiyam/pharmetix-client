@@ -1,5 +1,5 @@
-import { axiosInstance } from "@/lib/axios";
 import { ICategoriesResponse } from "@/features/medicine/medicine.type";
+import { fetchApi } from "@/lib/fetch-api";
 
 export const categoryService = {
   getAll: async (params?: {
@@ -9,12 +9,9 @@ export const categoryService = {
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }) => {
-    const { data } = await axiosInstance.get<ICategoriesResponse>(
-      "/categories",
-      {
-        params,
-      },
-    );
-    return data;
+    return fetchApi<ICategoriesResponse>("/api/v1/categories", {
+      method: "GET",
+      params,
+    });
   },
 };

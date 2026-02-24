@@ -18,7 +18,7 @@ export interface IReview {
   };
 }
 
-export interface MedicinesResponse {
+export interface ReviewsResponse {
   success: boolean;
   message: string;
   meta: IMeta;

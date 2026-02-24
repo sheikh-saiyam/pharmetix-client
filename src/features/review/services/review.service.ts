@@ -1,13 +1,17 @@
-import { axiosInstance } from "@/lib/axios";
+import { fetchApi } from "@/lib/fetch-api";
 import { ICreateReviewSchema } from "../schemas/review.schema";
+import { ReviewsResponse } from "../review.type";
 
 export const reviewService = {
   getAll: async () => {
-    const { data } = await axiosInstance.get("/reviews");
-    return data;
+    return fetchApi<ReviewsResponse>("/api/v1/reviews", {
+      method: "GET",
+    });
   },
   create: async (payload: ICreateReviewSchema) => {
-    const { data } = await axiosInstance.post("/reviews", payload);
-    return data;
+    return fetchApi("/api/v1/reviews", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
   },
 };
