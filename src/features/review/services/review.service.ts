@@ -1,6 +1,6 @@
 import { fetchApi } from "@/lib/fetch-api";
+import { CreateReviewResponse, ReviewsResponse } from "../review.type";
 import { ICreateReviewSchema } from "../schemas/review.schema";
-import { ReviewsResponse } from "../review.type";
 
 export const reviewService = {
   getAll: async () => {
@@ -9,7 +9,7 @@ export const reviewService = {
     });
   },
   create: async (payload: ICreateReviewSchema) => {
-    return fetchApi("/api/v1/reviews", {
+    return fetchApi<CreateReviewResponse>("/api/v1/reviews", {
       method: "POST",
       body: JSON.stringify(payload),
     });

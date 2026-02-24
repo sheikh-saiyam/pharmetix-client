@@ -24,3 +24,9 @@ export interface ReviewsResponse {
   meta: IMeta;
   data: IReview[];
 }
+
+export interface CreateReviewResponse {
+  success: boolean;
+  message: string;
+  data: IReview;
+}
