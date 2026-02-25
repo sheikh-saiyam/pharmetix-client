@@ -4,17 +4,17 @@ import { z } from "zod";
 // add NODE_ENV in here
 export const env = createEnv({
   server: {
-    NODE_ENV: z.enum(["development", "production"]),
     IMGBB_API_KEY: z.string(),
   },
 
   client: {
+    NEXT_PUBLIC_NODE_ENV: z.enum(["development", "production"]),
     NEXT_PUBLIC_API_URL: z.string().url(),
     NEXT_PUBLIC_BETTER_AUTH_URL: z.string().url(),
   },
 
   runtimeEnv: {
-    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
     IMGBB_API_KEY: process.env.IMGBB_API_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,

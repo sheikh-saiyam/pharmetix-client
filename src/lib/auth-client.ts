@@ -4,7 +4,7 @@ import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
   baseURL:
-    env.NODE_ENV === "production"
+    env.NEXT_PUBLIC_NODE_ENV === "production"
       ? "https://pharmetix-client.vercel.app"
       : "http://localhost:3000",
   fetchOptions: { credentials: "include" },
