@@ -3,7 +3,10 @@ import { inferAdditionalFields } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  baseURL:
+    env.NODE_ENV === "production"
+      ? "https://pharmetix-client.vercel.app"
+      : "http://localhost:3000",
   fetchOptions: { credentials: "include" },
   plugins: [
     inferAdditionalFields({

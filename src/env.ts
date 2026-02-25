@@ -1,8 +1,10 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+// add NODE_ENV in here
 export const env = createEnv({
   server: {
+    NODE_ENV: z.enum(["development", "production"]),
     IMGBB_API_KEY: z.string(),
   },
 
@@ -12,6 +14,7 @@ export const env = createEnv({
   },
 
   runtimeEnv: {
+    NODE_ENV: process.env.NODE_ENV,
     IMGBB_API_KEY: process.env.IMGBB_API_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
