@@ -32,7 +32,7 @@ export interface IMedicine {
   piecePrice?: number;
   stockQuantity: number;
   expiryDate: string;
-  isActive: boolean;
+  isFeatured: boolean;
   image?: string;
   description?: string;
   category: ICategory;
