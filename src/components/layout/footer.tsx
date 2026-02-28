@@ -133,13 +133,7 @@ export function Footer() {
               Help & Support
             </h4>
             <ul className="space-y-2">
-              {[
-                "Help Center",
-                "Track Order",
-                "Return Policy",
-                "Privacy Policy",
-                "Terms & Conditions",
-              ].map((item) => (
+              {["Help Center", "Track Order", "Return Policy"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -149,6 +143,22 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-sm text-slate-500 hover:text-primary transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-sm text-slate-500 hover:text-primary transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -242,17 +252,24 @@ export function Footer() {
 
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex items-center gap-4">
-              {["Privacy Policy", "Terms & Conditions", "Cookie Policy"].map(
-                (item) => (
-                  <Link
-                    key={item}
-                    href="#"
-                    className="text-xs text-slate-500 hover:text-primary transition-colors"
-                  >
-                    {item}
-                  </Link>
-                ),
-              )}
+              <Link
+                href="/privacy-policy"
+                className="text-xs text-slate-500 hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-xs text-slate-500 hover:text-primary transition-colors"
+              >
+                Terms & Conditions
+              </Link>
+              <Link
+                href="/cookie-policy"
+                className="text-xs text-slate-500 hover:text-primary transition-colors"
+              >
+                Cookie Policy
+              </Link>
             </div>
           </div>
         </div>

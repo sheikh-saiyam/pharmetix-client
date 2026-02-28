@@ -1,10 +1,12 @@
 "use client";
+
 import {
   useDeleteMedicine,
   useSellerMedicines,
+  useUpdateMedicine,
 } from "@/features/medicine/hooks/use-seller-medicines";
 import { Button } from "@/components/ui/button";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Minus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,12 +15,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import { MedicineForm } from "@/features/medicine/components/medicine-form";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { IMedicine } from "@/features/medicine/medicine.type";
+import { IMedicine, IStockOperation } from "@/features/medicine/medicine.type";
 import DashboardPageHeader from "@/components/shared/dashboard-header";
 import { Package } from "lucide-react";
 import useDebounce from "@/hooks/use-debounce";
@@ -50,6 +58,21 @@ export default function SellerMedicinesPage() {
   );
 
   const deleteMutation = useDeleteMedicine();
+  const updateMutation = useUpdateMedicine();
+
+  const handleUpdateStock = (
+    medicine: IMedicine,
+    operation: IStockOperation,
+    quantity: number = 1,
+  ) => {
+    updateMutation.mutate({
+      id: medicine.id,
+      params: {
+        stockOperation: operation,
+        stockQuantity: quantity,
+      },
+    });
+  };
 
   const handleEdit = (medicine: IMedicine) => {
     setSelectedMedicine(medicine);
@@ -77,11 +100,87 @@ export default function SellerMedicinesPage() {
       accessorKey: "stockQuantity",
       header: "Stock",
       cell: ({ row }) => {
-        const stock = row.original.stockQuantity;
-        return stock < 10 ? (
-          <Badge variant="destructive">{stock}</Badge>
-        ) : (
-          <span>{stock}</span>
+        const medicine = row.original;
+        const stock = medicine.stockQuantity;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7 rounded-full shadow-xs"
+              onClick={() =>
+                handleUpdateStock(medicine, IStockOperation.DECREMENT)
+              }
+              disabled={updateMutation.isPending || stock <= 0}
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <div className="min-w-[40px] text-center">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto p-0 hover:bg-transparent"
+                  >
+                    {stock < 10 ? (
+                      <Badge
+                        variant="destructive"
+                        className="px-1.5 cursor-pointer"
+                      >
+                        {stock}
+                      </Badge>
+                    ) : (
+                      <span className="font-bold text-slate-700 cursor-pointer">
+                        {stock}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-40 p-3">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Update Stock</p>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        defaultValue={stock}
+                        className="h-8"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            const val = parseInt(e.currentTarget.value);
+                            if (isNaN(val)) return;
+                            const diff = val - stock;
+                            if (diff === 0) return;
+                            handleUpdateStock(
+                              medicine,
+                              diff > 0
+                                ? IStockOperation.INCREMENT
+                                : IStockOperation.DECREMENT,
+                              Math.abs(diff),
+                            );
+                            e.currentTarget.blur();
+                          }
+                        }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">
+                      Press Enter to update
+                    </p>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7 rounded-full shadow-xs"
+              onClick={() =>
+                handleUpdateStock(medicine, IStockOperation.INCREMENT)
+              }
+              disabled={updateMutation.isPending}
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
         );
       },
     },

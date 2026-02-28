@@ -1,5 +1,10 @@
 import { IMeta } from "@/types/index.type";
 
+export enum IStockOperation {
+  INCREMENT = "INC",
+  DECREMENT = "DEC",
+}
+
 export interface ICategory {
   id: string;
   name: string;

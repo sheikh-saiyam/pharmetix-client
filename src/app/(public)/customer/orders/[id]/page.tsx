@@ -1,6 +1,7 @@
 "use client";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table/data-table";
@@ -17,6 +18,7 @@ import {
   ArrowLeft,
   Calendar,
   CreditCard,
+  Eye,
   Hash,
   Package2,
   Phone,
@@ -138,7 +140,26 @@ export default function OrderDetailsPage() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             cell: ({ row }: { row: any }) => {
               const item = row.original;
-              return (
+              return item.isReviewed ? (
+                <div className="flex items-center gap-2">
+                  <Badge variant="success" className="px-4 py-1.5 h-auto">
+                    Reviewed
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="rounded-full"
+                    asChild
+                  >
+                    <Link
+                      href={`/medicines/${item.medicine.slug}`}
+                      className="flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" /> View Review
+                    </Link>
+                  </Button>
+                </div>
+              ) : (
                 <WriteReviewDialog
                   medicineId={item.medicine.id}
                   orderId={order.id}

@@ -17,9 +17,9 @@ import { useState } from "react";
 export default function MyOrdersPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
+  const [sortBy, setSortBy] = useState<string | undefined>("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>(
-    undefined,
+    "desc",
   );
 
   const { data, isLoading } = useMyOrders({ page, limit, sortBy, sortOrder });
@@ -104,6 +104,8 @@ export default function MyOrdersPage() {
         onPageChange={setPage}
         onLimitChange={setLimit}
         onSort={handleSort}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
         isLoading={isLoading}
         emptyState={{
           icon: ShoppingBag,

@@ -1,8 +1,11 @@
 "use client";
 
 import DashboardPageHeader from "@/components/shared/dashboard-header";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge, getStatusVariant } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,30 +15,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  useDeleteUser,
-  useUpdateUserRole,
-  useUpdateUserStatus,
-  useUsers,
-} from "@/features/admin/hooks/use-users";
-import { UserRole } from "@/features/auth/schemas/auth.schema";
-import { UserStatus } from "@/types/user.type";
-import { MoreHorizontal, Users } from "lucide-react";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DataTable } from "@/components/ui/data-table/data-table";
-import { ColumnDef } from "@tanstack/react-table";
-import { IUser } from "@/types/user.type";
-import { useState } from "react";
+import {
+  useUpdateUserStatus,
+  useUsers,
+} from "@/features/admin/hooks/use-users";
+import { UserRole } from "@/features/auth/schemas/auth.schema";
 import useDebounce from "@/hooks/use-debounce";
+import { IUser, UserStatus } from "@/types/user.type";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import {
+  Copy,
+  MoreHorizontal,
+  ShieldAlert,
+  ShieldCheck,
+  Store,
+  User,
+  UserMinus,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function UsersPage() {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
   const [role, setRole] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<string | undefined>(undefined);
@@ -57,16 +67,44 @@ export default function UsersPage() {
   });
 
   const updateStatus = useUpdateUserStatus();
-  const updateRole = useUpdateUserRole();
-  const deleteUser = useDeleteUser();
 
   const columns: ColumnDef<IUser>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => (
-        <span className="font-medium">{row.original.name}</span>
-      ),
+      cell: ({ row }) => {
+        const name = row.original.name;
+        const imageUrl = row.original.image;
+
+        const initials = name
+          ?.split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-9 w-9">
+              <AvatarImage
+                src={imageUrl || "https://ui-avatars.com/api/?name=" + name}
+                alt={name}
+                className="object-cover"
+              />
+              <AvatarFallback className="bg-muted text-xs font-semibold">
+                {initials || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <span className="font-medium text-sm leading-none">{name}</span>
+              {/* Optional: Add email below for better UX */}
+              <span className="text-xs text-muted-foreground">
+                {row.original.email}
+              </span>
+            </div>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "email",
@@ -75,22 +113,53 @@ export default function UsersPage() {
     {
       accessorKey: "role",
       header: "Role",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="capitalize">
-          {row.original.role}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const role = row.original.role.toUpperCase();
+
+        const roleConfig = {
+          ADMIN: {
+            icon: <ShieldCheck className="w-4 h-4" />,
+            color:
+              "text-rose-600 bg-rose-50 dark:bg-rose-950/30 border border-rose-100",
+            label: "Admin",
+          },
+          SELLER: {
+            icon: <Store className="w-4 h-4" />,
+            color:
+              "text-amber-600 bg-amber-50 dark:bg-amber-950/30 border border-amber-100",
+            label: "Seller",
+          },
+          CUSTOMER: {
+            icon: <User className="w-4 h-4" />,
+            color:
+              "text-blue-600 bg-blue-50 dark:bg-blue-950/30 border border-blue-100",
+            label: "Customer",
+          },
+        };
+
+        // Fallback for unexpected roles
+        const config = roleConfig[role as keyof typeof roleConfig] || {
+          icon: <User className="w-4 h-4" />,
+          color: "text-gray-600 bg-gray-50",
+          label: role,
+        };
+
+        return (
+          <div
+            className={`flex items-center gap-2 w-fit px-2 py-1 rounded-md font-medium text-xs ${config.color}`}
+          >
+            {config.icon}
+            {config.label}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => (
         <Badge
-          variant={
-            row.original.status === UserStatus.ACTIVE
-              ? "default"
-              : "destructive"
-          }
+          variant={getStatusVariant(row.original.status).variant}
           className="capitalize"
         >
           {row.original.status}
@@ -98,73 +167,97 @@ export default function UsersPage() {
       ),
     },
     {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Joined At" />
+      ),
+      cell: ({ row }) => (
+        <span className="text-xs text-muted-foreground">
+          {format(new Date(row.original.createdAt), "MMM dd, yyyy")}
+        </span>
+      ),
+    },
+    {
       id: "actions",
-      header: () => <div className="text-right">Action</div>,
+      header: () => (
+        <div className="text-right pr-4 font-semibold">Actions</div>
+      ),
       cell: ({ row }) => {
         const user = row.original;
+
+        const onStatusChange = (newStatus: UserStatus) => {
+          // 1. Create a loading toast and capture its ID
+          const toastId = toast.loading("Updating user status...");
+
+          updateStatus.mutate(
+            {
+              userId: user.id,
+              status: newStatus,
+            },
+            {
+              onSuccess: () => {
+                toast.success("User status updated", { id: toastId });
+              },
+            },
+          );
+        };
+
         return (
           <div className="text-right">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0 hover:bg-muted data-[state=open]:bg-muted"
+                >
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>User Management</DropdownMenuLabel>
+
                 <DropdownMenuItem
-                  onClick={() =>
-                    updateStatus.mutate({
-                      userId: user.id,
-                      isActive: user.status !== UserStatus.ACTIVE,
-                    })
-                  }
+                  onClick={() => {
+                    navigator.clipboard.writeText(user.id);
+                    toast.success("User ID copied");
+                  }}
+                  className="cursor-pointer"
                 >
-                  {user.status === UserStatus.ACTIVE
-                    ? "Ban User"
-                    : "Activate User"}
+                  <Copy className="mr-2 h-4 w-4 text-muted-foreground" />
+                  Copy User ID
                 </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
+
+                {/* Set to Active */}
                 <DropdownMenuItem
-                  disabled={user.role === UserRole.ADMIN}
-                  onClick={() =>
-                    updateRole.mutate({
-                      userId: user.id,
-                      role: UserRole.ADMIN,
-                    })
-                  }
+                  disabled={user.status === UserStatus.ACTIVE}
+                  onClick={() => onStatusChange(UserStatus.ACTIVE)}
+                  className="cursor-pointer text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-950/30"
                 >
-                  Make Admin
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Activate Account
                 </DropdownMenuItem>
+
+                {/* Set to Inactive */}
                 <DropdownMenuItem
-                  disabled={user.role === UserRole.SELLER}
-                  onClick={() =>
-                    updateRole.mutate({
-                      userId: user.id,
-                      role: UserRole.SELLER,
-                    })
-                  }
+                  disabled={user.status === UserStatus.INACTIVE}
+                  onClick={() => onStatusChange(UserStatus.INACTIVE)}
+                  className="cursor-pointer text-amber-600 focus:text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-950/30"
                 >
-                  Make Seller
+                  <UserMinus className="mr-2 h-4 w-4" />
+                  Deactivate Account
                 </DropdownMenuItem>
+
+                {/* Set to Banned */}
                 <DropdownMenuItem
-                  disabled={user.role === UserRole.CUSTOMER}
-                  onClick={() =>
-                    updateRole.mutate({
-                      userId: user.id,
-                      role: UserRole.CUSTOMER,
-                    })
-                  }
+                  disabled={user.status === UserStatus.BANNED}
+                  onClick={() => onStatusChange(UserStatus.BANNED)}
+                  className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
                 >
-                  Make Customer
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="text-destructive font-medium"
-                  onClick={() => deleteUser.mutate(user.id)}
-                >
-                  Delete User
+                  <ShieldAlert className="mr-2 h-4 w-4" />
+                  Ban User
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

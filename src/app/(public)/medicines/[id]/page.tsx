@@ -325,17 +325,32 @@ export default function MedicineDetailsPage() {
           </div>
 
           {/* Reviews Section */}
-          {medicine.reviews?.length && medicine.reviews.length > 0 && (
-            <div className="mt-16 max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-10">
-                <h2 className="text-2xl font-semibold text-slate-900">
-                  Customer Reviews
-                </h2>
-                <div className="h-px flex-1 bg-slate-100 mx-6 hidden sm:block" />
+          {medicine.reviews?.length && medicine.reviews.length > 0 ? (
+            <div className="mt-24 border-t border-slate-100 pt-20">
+              <div className="max-w-4xl mx-auto px-4">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+                  <div className="space-y-0.5">
+                    <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+                      Customer Experience
+                    </h2>
+                    <p className="text-slate-500 font-medium">
+                      What our community says about this medicine
+                    </p>
+                  </div>
+                  {user?.role === UserRole.CUSTOMER && (
+                    <Button
+                      variant="outline"
+                      className="rounded-xl border-slate-200 font-bold px-6"
+                    >
+                      Write a Review
+                    </Button>
+                  )}
+                </div>
+
+                <ReviewList reviews={medicine.reviews} />
               </div>
-              <ReviewList reviews={medicine.reviews} />
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

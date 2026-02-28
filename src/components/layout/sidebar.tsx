@@ -64,6 +64,12 @@ export function AppSidebar() {
       roles: [UserRole.SELLER],
     },
     {
+      title: "All Medicines",
+      href: "/dashboard/admin/medicines",
+      icon: Pill,
+      roles: [UserRole.ADMIN],
+    },
+    {
       title: "Seller Orders",
       href: "/dashboard/seller/orders",
       icon: ListOrdered,
@@ -91,7 +97,9 @@ export function AppSidebar() {
 
   const publicItems = [
     { title: "Home", href: "/", icon: Home },
-    { title: "All Medicines", href: "/medicines", icon: Pill },
+    ...(role !== UserRole.ADMIN
+      ? [{ title: "All Medicines", href: "/medicines", icon: Pill }]
+      : []),
     { title: "Shop", href: "/medicines", icon: ShoppingBag },
   ];
 

@@ -3,9 +3,9 @@
 import { cn } from "@/lib/utils";
 import { IUser } from "@/types/user.type";
 import {
+  Cookie,
   FileText,
   Lock,
-  ShieldCheck,
   ShoppingBag,
   Stethoscope,
   User,
@@ -36,11 +36,6 @@ const sidebarItems = [
     icon: Stethoscope,
   },
   {
-    title: "Legal & Support",
-    href: "/support",
-    icon: ShieldCheck,
-  },
-  {
     title: "Terms & Conditions",
     href: "/terms",
     icon: FileText,
@@ -49,6 +44,11 @@ const sidebarItems = [
     title: "Privacy Policy",
     href: "/privacy-policy",
     icon: Lock,
+  },
+  {
+    title: "Cookie Policy",
+    href: "/cookie-policy",
+    icon: Cookie,
   },
 ];
 

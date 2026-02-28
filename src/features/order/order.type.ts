@@ -55,6 +55,8 @@ export interface IOrderItem {
     shippingPostalCode: string;
     createdAt: string;
   };
+  isReviewed: boolean;
+  reviewId?: string | null;
 }
 
 export interface IOrder {

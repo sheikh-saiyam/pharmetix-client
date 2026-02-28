@@ -6,7 +6,11 @@ import {
   medicineService,
 } from "@/features/medicine/services/medicine.service";
 import { toast } from "sonner";
-import { IGetMedicinesParams, IMedicine } from "../medicine.type";
+import {
+  IGetMedicinesParams,
+  IMedicine,
+  IStockOperation,
+} from "../medicine.type";
 
 export const useSellerMedicines = (params?: IGetMedicinesParams) => {
   return useQuery({
@@ -37,11 +41,17 @@ export const useUpdateMedicine = () => {
   return useMutation({
     mutationFn: ({
       id,
-      payload,
+      payload = {},
+      params,
     }: {
       id: string;
-      payload: Partial<IMedicine>;
-    }) => medicineService.update(id, payload),
+      payload?: Partial<IMedicine>;
+      params?: {
+        stockOperation?: IStockOperation;
+        stockQuantity?: number;
+        skipUpdateQuery?: boolean;
+      };
+    }) => medicineService.update(id, payload, params),
     onSuccess: () => {
       toast.success("Medicine updated successfully");
       queryClient.invalidateQueries({ queryKey: ["seller-medicines"] });

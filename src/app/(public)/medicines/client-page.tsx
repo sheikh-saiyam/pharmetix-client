@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { PaginationControl } from "@/components/ui/pagination-control";
 import {
@@ -204,9 +205,11 @@ export default function MedicinesClientPage() {
             </div>
           ) : data?.data?.length === 0 ? (
             <div className="text-center py-20 bg-muted/20 rounded-xl border border-dashed">
-              <p className="text-muted-foreground text-lg">
-                No medicines found matching your criteria.
-              </p>
+              <EmptyState
+                title="No medicines found"
+                description="No medicines found matching your criteria."
+                icon={Search}
+              />
               <Button
                 variant="link"
                 onClick={() => {

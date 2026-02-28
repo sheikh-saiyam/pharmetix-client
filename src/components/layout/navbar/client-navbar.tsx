@@ -18,6 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useMedicines } from "@/features/medicine/hooks/use-medicines";
 import { ICategory } from "@/features/medicine/medicine.type";
 import { authClient } from "@/lib/auth-client";
@@ -26,9 +33,10 @@ import { IUser, UserRole } from "@/types/user.type";
 import {
   LayoutDashboard,
   LogOut,
+  Menu,
   PhoneCall,
-  Search,
   Pill,
+  Search,
   ShoppingCart,
   User as UserIcon,
 } from "lucide-react";
@@ -37,6 +45,117 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+
+/**
+ * MOBILE MENU COMPONENT
+ */
+const MobileMenu = ({
+  categories,
+  user,
+  onClose,
+  onLogout,
+}: {
+  categories: ICategory[];
+  user: IUser;
+  onClose: () => void;
+  onLogout: () => void;
+}) => (
+  <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-2">
+      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
+        Navigation
+      </p>
+      <Link
+        href="/medicines"
+        onClick={onClose}
+        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors font-semibold"
+      >
+        <Pill className="h-5 w-5 text-primary" />
+        Medicines
+      </Link>
+    </div>
+
+    <div className="flex flex-col gap-2">
+      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
+        Categories
+      </p>
+      <div className="grid grid-cols-1 gap-1">
+        {categories.map((cat) => (
+          <Link
+            key={`mobile-categories-${cat.id}`}
+            href={`/medicines?categoryId=${cat.id}`}
+            onClick={onClose}
+            className="px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 font-medium"
+          >
+            {cat.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+
+    <div className="mt-auto pt-4 border-t flex flex-col gap-4">
+      <Button
+        variant="outline"
+        className="w-full text-red-500 border-red-200 hover:bg-red-50 gap-2"
+      >
+        <PhoneCall className="h-4 w-4" />
+        Call for Order
+      </Button>
+
+      {!user || !user.id ? (
+        <Link
+          href="/auth/login"
+          onClick={onClose}
+          className="flex items-center justify-center w-full py-2.5 rounded-lg bg-primary text-white font-bold hover:opacity-90 transition-opacity"
+        >
+          Login / Signup
+        </Link>
+      ) : (
+        <div className="flex flex-col gap-2 pb-6">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-2">
+            Account
+          </p>
+          <Link
+            href={
+              user.role === UserRole.ADMIN
+                ? "/dashboard/admin"
+                : user.role === UserRole.SELLER
+                  ? "/dashboard/seller"
+                  : "/customer"
+            }
+            onClick={onClose}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-700"
+          >
+            <LayoutDashboard className="h-5 w-5 text-blue-500" />
+            Dashboard
+          </Link>
+          <Link
+            href={
+              user.role === UserRole.CUSTOMER
+                ? "/customer/profile"
+                : "/dashboard/profile"
+            }
+            onClick={onClose}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-700"
+          >
+            <UserIcon className="h-5 w-5 text-slate-500" />
+            Profile
+          </Link>
+          <button
+            onClick={() => {
+              onLogout();
+              onClose();
+            }}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors font-medium text-red-600 text-left"
+          >
+            <LogOut className="h-5 w-5" />
+            Sign Out
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+);
 
 const ClientNavbar = ({
   categories,
@@ -47,6 +166,7 @@ const ClientNavbar = ({
 }) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const pathName = usePathname();
   const { items } = useCartStore();
 
@@ -60,15 +180,51 @@ const ClientNavbar = ({
   return (
     <header className="w-full border-b bg-white sticky top-0 z-50">
       {/* TOP ROW: Logo, Search, Auth */}
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4 h-16 lg:h-20 flex items-center justify-between gap-2 lg:gap-4">
+        {/* Mobile Menu Trigger */}
+        <div className="lg:hidden">
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="w-[300px] flex flex-col [&>button]:hidden"
+            >
+              <SheetHeader className="border-b pb-4">
+                <SheetTitle className="text-left flex items-center gap-2 select-none">
+                  <Image src={Logo} alt="Arogga" width={150} height={50} />
+                </SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto">
+                <MobileMenu
+                  categories={categories}
+                  user={user}
+                  onClose={() => setIsOpen(false)}
+                  onLogout={handleLogout}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         {/* Logo */}
-        <Link href="/" className="shrink-0 select-none">
-          <Image src={Logo} alt="Arogga" width={140} height={50} priority />
+        <Link href="/" className="shrink-0 select-none mr-auto lg:mr-0">
+          <Image
+            src={Logo}
+            alt="Arogga"
+            width={120}
+            height={40}
+            className="lg:w-[140px] lg:h-[50px]"
+            priority
+          />
         </Link>
 
-        {/* Search Bar Trigger */}
+        {/* Search Bar - Hidden on mobile */}
         {pathName != "/medicines" && (
-          <div className="flex-1 max-w-3xl">
+          <div className="hidden lg:block flex-1 max-w-3xl">
             <SearchDialog
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -77,7 +233,18 @@ const ClientNavbar = ({
         )}
 
         {/* Right Actions */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 lg:gap-6">
+          {/* Mobile Search Icon */}
+          {pathName != "/medicines" && (
+            <div className="lg:hidden">
+              <SearchDialog
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                isMobileTrigger
+              />
+            </div>
+          )}
+
           {/* User Profile / Auth */}
           <div className="flex items-center gap-2">
             {user && user.id ? (
@@ -85,7 +252,7 @@ const ClientNavbar = ({
             ) : (
               <Link
                 href="/auth/login"
-                className="text-sm font-semibold hover:text-primary"
+                className="hidden lg:block text-sm font-semibold hover:text-primary transition-colors"
               >
                 Login / Signup
               </Link>
@@ -93,37 +260,27 @@ const ClientNavbar = ({
           </div>
 
           {/* Cart */}
-          {user && user.role === UserRole.CUSTOMER && (
-            <Link href="/cart" className="relative group">
-              <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
-                <ShoppingCart className="h-7 w-7 text-slate-700" />
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+          <Link href="/cart" className="relative group">
+            <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
+              <ShoppingCart className="h-6 w-6 lg:h-7 lg:w-7 text-slate-700" />
+              {items.length > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white">
                   {items.length}
                 </span>
-              </div>
-            </Link>
-          )}
-          {!user && (
-            <Link href="/cart" className="relative group">
-              <div className="p-2 rounded-full hover:bg-slate-100 transition-colors">
-                <ShoppingCart className="h-7 w-7 text-slate-700" />
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {items.length}
-                </span>
-              </div>
-            </Link>
-          )}
+              )}
+            </div>
+          </Link>
         </div>
       </div>
 
-      {/* BOTTOM ROW: Categories Navigation */}
-      <div className="border-t bg-white overflow-x-auto no-scrollbar">
+      {/* BOTTOM ROW: Categories Navigation - Hidden on mobile */}
+      <div className="hidden lg:block border-t bg-white overflow-x-auto no-scrollbar">
         <div className="container mx-auto px-4 flex items-center justify-between h-12 text-[13px] font-medium whitespace-nowrap">
           <div className="flex items-center gap-6">
             {/* Medicines (Replaced Shop by Category) */}
             <Link
               href="/medicines"
-              className="flex items-center gap-2 hover:text-primary font-bold hover:opacity-80"
+              className="flex items-center gap-2 hover:text-primary font-bold hover:opacity-80 transition-colors"
             >
               <Pill className="h-5 w-5 -mt-0.5" />
               Medicines
@@ -146,7 +303,7 @@ const ClientNavbar = ({
             variant="ghost"
             className="text-red-500 hover:text-red-600 hover:bg-red-50 gap-2 h-8"
           >
-            <PhoneCall className="h-2 w-2" />
+            <PhoneCall className="h-4 w-4" />
             Call for Order
           </Button>
         </div>
@@ -160,9 +317,11 @@ const ClientNavbar = ({
 function SearchDialog({
   searchQuery,
   setSearchQuery,
+  isMobileTrigger = false,
 }: {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  isMobileTrigger?: boolean;
 }) {
   const { data: searchResults, isLoading } = useMedicines({
     search: searchQuery,
@@ -172,14 +331,20 @@ function SearchDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="relative w-full cursor-pointer group bg-sidebar-rin">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600">
-            <Search className="h-5 w-5" />
+        {isMobileTrigger ? (
+          <Button variant="ghost" size="icon" className="shrink-0">
+            <Search className="h-6 w-6 text-slate-700" />
+          </Button>
+        ) : (
+          <div className="relative w-full cursor-pointer group bg-sidebar-rin">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600">
+              <Search className="h-5 w-5" />
+            </div>
+            <div className="w-full h-11 bg-sidebar-ring/5 rounded-md border border-sidebar-ring/10 group-hover:border-slate-300 flex items-center px-10 text-slate-700">
+              Search for &quot;healthcare products&quot;
+            </div>
           </div>
-          <div className="w-full h-11 bg-sidebar-ring/5 rounded-md border border-sidebar-ring/10 group-hover:border-slate-300 flex items-center px-10 text-slate-700">
-            Search for &quot;healthcare products&quot;
-          </div>
-        </div>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-screen rounded-none h-screen border-0 border-t-0 flex flex-col p-0 overflow-hidden">
         <DialogHeader className="p-4 border-b">
@@ -314,7 +479,7 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
               className="flex w-full items-center"
             >
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-blue-50 text-blue-600 mr-2">
-                <LayoutDashboard className="h-2 w-2" />
+                <LayoutDashboard className="h-4 w-4" />
               </div>
               <div className="flex flex-col">
                 <span className="font-semibold text-slate-700">Dashboard</span>
@@ -335,7 +500,7 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
               className="flex w-full items-center"
             >
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-slate-100 text-slate-600 mr-2">
-                <UserIcon className="h-2 w-2" />
+                <UserIcon className="h-4 w-4" />
               </div>
               <span className="font-semibold text-slate-700">Profile</span>
             </Link>
@@ -349,7 +514,7 @@ function UserMenu({ user, onLogout }: { user: IUser; onLogout: () => void }) {
           className="rounded-md cursor-pointer py-1.5 text-red-600 focus:bg-red-50 focus:text-red-700 transition-colors"
         >
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-red-100/50 mr-2">
-            <LogOut className="h-2 w-2 text-red-600" />
+            <LogOut className="h-4 w-4 text-red-600" />
           </div>
           <span className="font-bold">Sign Out</span>
         </DropdownMenuItem>

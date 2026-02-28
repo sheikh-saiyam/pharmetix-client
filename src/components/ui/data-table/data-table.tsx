@@ -45,6 +45,8 @@ interface DataTableProps<TData, TValue> {
   onLimitChange?: (limit: number) => void;
   onSearch?: (search: string) => void;
   onSort?: (sortBy: string, sortOrder: "asc" | "desc") => void;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
   isLoading?: boolean;
   renderTopContent?: () => React.ReactNode;
   /** Custom empty state displayed when data is empty and not loading */
@@ -59,6 +61,8 @@ export function DataTable<TData, TValue>({
   onLimitChange,
   onSearch,
   onSort,
+  sortBy,
+  sortOrder,
   isLoading,
   renderTopContent,
   emptyState,
@@ -69,7 +73,12 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(
+    sortBy ? [{ id: sortBy, desc: sortOrder === "desc" }] : [],
+  );
+
+  // Track if it's the first render to avoid redundant onSort call
+  const isFirstRender = React.useRef(true);
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
@@ -83,7 +92,7 @@ export function DataTable<TData, TValue>({
       globalFilter,
       pagination: {
         pageIndex: meta ? meta.page - 1 : 0,
-        pageSize: meta ? meta.limit : 10,
+        pageSize: meta ? meta.limit : 20,
       },
     },
     pageCount: meta?.totalPages ?? -1, // Use -1 or totalPages
@@ -104,6 +113,11 @@ export function DataTable<TData, TValue>({
 
   // Handle sorting changes
   React.useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (onSort && sorting.length > 0) {
       const { id, desc } = sorting[0];
       onSort(id, desc ? "desc" : "asc");

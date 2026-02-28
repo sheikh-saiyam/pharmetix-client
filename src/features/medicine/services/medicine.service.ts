@@ -4,6 +4,7 @@ import {
   IMedicine,
   IMedicineResponse,
   IMedicinesResponse,
+  IStockOperation,
 } from "../medicine.type";
 
 // For seller dashboard
@@ -35,10 +36,19 @@ export const medicineService = {
     });
   },
 
-  update: async (id: string, payload: Partial<IMedicine>) => {
+  update: async (
+    id: string,
+    payload: Partial<IMedicine>,
+    params?: {
+      stockOperation?: IStockOperation;
+      stockQuantity?: number;
+      skipUpdateQuery?: boolean;
+    },
+  ) => {
     return fetchApi<IMedicine>(`/api/v1/medicines/${id}`, {
       method: "PATCH",
       body: JSON.stringify(payload),
+      params: params as Record<string, string | number | boolean | undefined>,
     });
   },
 

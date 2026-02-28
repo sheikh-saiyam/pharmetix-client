@@ -24,7 +24,7 @@ export default async function Home() {
   });
 
   return (
-    <div className="container mx-auto flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)] md:gap-10">
+    <div className="container mx-auto flex-1 items-start md:grid md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)] md:gap-10 px-6">
       <Sidebar
         categories={categories.data}
         className="hidden md:block sticky top-20 self-start"

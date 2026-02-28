@@ -31,7 +31,7 @@ const STATUS_OPTIONS = [
 
 export default function ManageOrdersPage() {
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<string | undefined>("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>(
@@ -154,6 +154,8 @@ export default function ManageOrdersPage() {
           setSortBy(sortBy);
           setSortOrder(sortOrder);
         }}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
         renderTopContent={() => (
           <div className="flex items-center gap-2">
             <Popover>

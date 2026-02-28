@@ -126,15 +126,7 @@ export default function SellerOrdersPage() {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => (
-        <Badge
-          variant={
-            row.original.status === OrderItemStatus.SHIPPED
-              ? "default"
-              : row.original.status === OrderItemStatus.PROCESSING
-                ? "secondary"
-                : "secondary"
-          }
-        >
+        <Badge variant={getStatusVariant(row.original.status).variant}>
           {row.original.status}
         </Badge>
       ),
@@ -218,6 +210,8 @@ export default function SellerOrdersPage() {
           setSortBy(sortBy);
           setSortOrder(sortOrder);
         }}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
         renderTopContent={() => (
           <div className="flex items-center gap-2">
             <Popover>
