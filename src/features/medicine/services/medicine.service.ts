@@ -6,6 +6,14 @@ import {
   IMedicinesResponse,
 } from "../medicine.type";
 
+// For seller dashboard
+export const getSellerMedicines = async (params?: IGetMedicinesParams) => {
+  return fetchApi<IMedicinesResponse>("/api/v1/medicines/seller", {
+    method: "GET",
+    params: params as Record<string, string | number | boolean | undefined>,
+  });
+};
+
 export const medicineService = {
   getAll: async (params?: IGetMedicinesParams) => {
     return fetchApi<IMedicinesResponse>("/api/v1/medicines", {
@@ -17,14 +25,6 @@ export const medicineService = {
   getById: async (id: string) => {
     return fetchApi<IMedicineResponse>(`/api/v1/medicines/${id}`, {
       method: "GET",
-    });
-  },
-
-  // For seller dashboard
-  getSellerMedicines: async (params?: IGetMedicinesParams) => {
-    return fetchApi<IMedicinesResponse>("/api/v1/medicines/seller", {
-      method: "GET",
-      params: params as Record<string, string | number | boolean | undefined>,
     });
   },
 

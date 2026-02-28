@@ -1,14 +1,17 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { medicineService } from "@/features/medicine/services/medicine.service";
+import {
+  getSellerMedicines,
+  medicineService,
+} from "@/features/medicine/services/medicine.service";
 import { toast } from "sonner";
 import { IGetMedicinesParams, IMedicine } from "../medicine.type";
 
 export const useSellerMedicines = (params?: IGetMedicinesParams) => {
   return useQuery({
     queryKey: ["seller-medicines", params],
-    queryFn: () => medicineService.getSellerMedicines(params),
+    queryFn: () => getSellerMedicines(params),
   });
 };
 
