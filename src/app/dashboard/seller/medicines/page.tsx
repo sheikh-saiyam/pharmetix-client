@@ -199,6 +199,12 @@ export default function SellerMedicinesPage() {
           setSortBy(sortBy);
           setSortOrder(sortOrder);
         }}
+        emptyState={{
+          icon: Package,
+          title: "No medicines found",
+          description:
+            'You haven\'t added any medicines yet. Click "Add Medicine" to get started.',
+        }}
       />
     </div>
   );

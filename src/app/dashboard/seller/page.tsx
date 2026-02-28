@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   DollarSign,
   Package,
+  Package2,
   ShoppingBag,
   TrendingUp,
   Truck,
@@ -34,6 +35,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ISellerStatsData } from "@/features/dashboard/dashboard.type";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function SellerDashboardPage() {
   const { data: response, isLoading } = useQuery({
@@ -86,14 +88,14 @@ export default function SellerDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SellerStatCard
           title="Total Earnings"
-          value={`৳${stats.orderItemsStats.totalRevenue.toLocaleString()}`}
+          value={`৳${(stats.orderItemsStats?.totalRevenue ?? 0).toLocaleString()}`}
           description="Lifetime sales revenue"
           icon={<DollarSign className="h-4 w-4 text-emerald-600" />}
           color="bg-emerald-50"
         />
         <SellerStatCard
           title="Total Orders"
-          value={stats.orderItemsStats.totalOrderItems.toString()}
+          value={(stats.orderItemsStats?.totalOrderItems ?? 0).toString()}
           description="Total items ordered"
           icon={<ShoppingBag className="h-4 w-4 text-blue-600" />}
           color="bg-blue-50"
@@ -101,8 +103,8 @@ export default function SellerDashboardPage() {
         <SellerStatCard
           title="Stock Alerts"
           value={(
-            stats.medicineStats.lowStockMedicines.length +
-            stats.medicineStats.outOfStockMedicines.length
+            (stats.medicineStats?.lowStockMedicines?.length ?? 0) +
+            (stats.medicineStats?.outOfStockMedicines?.length ?? 0)
           ).toString()}
           description="Critical items needing attention"
           icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
@@ -110,8 +112,8 @@ export default function SellerDashboardPage() {
         />
         <SellerStatCard
           title="Active Medicines"
-          value={stats.medicineStats.totalActiveMedicines.toString()}
-          description={`${stats.medicineStats.totalMedicines} total listed`}
+          value={(stats.medicineStats?.totalActiveMedicines ?? 0).toString()}
+          description={`${stats.medicineStats?.totalMedicines ?? 0} total listed`}
           icon={<Box className="h-4 w-4 text-purple-600" />}
           color="bg-purple-50"
         />
@@ -132,42 +134,51 @@ export default function SellerDashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="h-[350px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="sellerRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
-                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#f0f0f0"
-                />
-                <XAxis
-                  dataKey="name"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(val) => `৳${val}`}
-                />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#2563eb"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#sellerRev)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {revenueData && revenueData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={revenueData}>
+                  <defs>
+                    <linearGradient id="sellerRev" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#f0f0f0"
+                  />
+                  <XAxis
+                    dataKey="name"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(val) => `৳${val}`}
+                  />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#2563eb"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#sellerRev)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState
+                icon={BarChart3}
+                title="No Sales Data Yet"
+                description="Sales trends will appear here once you start receiving orders."
+                className="h-full"
+              />
+            )}
           </CardContent>
         </Card>
 
@@ -184,14 +195,17 @@ export default function SellerDashboardPage() {
                   <Truck className="h-4 w-4 text-blue-500" /> Shipped Items
                 </span>
                 <span className="font-bold">
-                  {stats.orderItemsStats.totalShippedOrderItems}
+                  {stats.orderItemsStats?.totalShippedOrderItems ?? 0}
                 </span>
               </div>
               <Progress
                 value={
-                  (stats.orderItemsStats.totalShippedOrderItems /
-                    stats.orderItemsStats.totalOrderItems) *
-                  100
+                  stats.orderItemsStats?.totalOrderItems &&
+                  stats.orderItemsStats.totalOrderItems !== 0
+                    ? ((stats.orderItemsStats?.totalShippedOrderItems ?? 0) /
+                        stats.orderItemsStats.totalOrderItems) *
+                      100
+                    : 0
                 }
                 className="h-2"
               />
@@ -203,14 +217,17 @@ export default function SellerDashboardPage() {
                   <Package className="h-4 w-4 text-orange-500" /> Processing
                 </span>
                 <span className="font-bold">
-                  {stats.orderItemsStats.totalProcessingOrderItems}
+                  {stats.orderItemsStats?.totalProcessingOrderItems ?? 0}
                 </span>
               </div>
               <Progress
                 value={
-                  (stats.orderItemsStats.totalProcessingOrderItems /
-                    stats.orderItemsStats.totalOrderItems) *
-                  100
+                  stats.orderItemsStats?.totalOrderItems &&
+                  stats.orderItemsStats.totalOrderItems !== 0
+                    ? ((stats.orderItemsStats?.totalProcessingOrderItems ?? 0) /
+                        stats.orderItemsStats.totalOrderItems) *
+                      100
+                    : 0
                 }
                 className="h-2"
               />
@@ -220,24 +237,33 @@ export default function SellerDashboardPage() {
               <h4 className="text-sm font-semibold mb-3">
                 Top Product Performance
               </h4>
-              {stats.medicineStats.topSellingMedicines
-                .slice(0, 3)
-                .map((med) => (
-                  <div
-                    key={`seller-dashboard-medicine-id-1-${med.id}`}
-                    className="flex items-center justify-between mb-3 last:mb-0"
-                  >
-                    <div className="text-sm">
-                      <p className="font-medium">{med.brandName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {med.genericName}
-                      </p>
+              {(stats.medicineStats?.topSellingMedicines ?? []).length > 0 ? (
+                (stats.medicineStats?.topSellingMedicines ?? [])
+                  .slice(0, 3)
+                  .map((med) => (
+                    <div
+                      key={`seller-dashboard-medicine-id-1-${med.id}`}
+                      className="flex items-center justify-between mb-3 last:mb-0"
+                    >
+                      <div className="text-sm">
+                        <p className="font-medium">{med.brandName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {med.genericName}
+                        </p>
+                      </div>
+                      <Badge variant="outline">
+                        {med._count?.orderItems ?? 0} sales
+                      </Badge>
                     </div>
-                    <Badge variant="outline">
-                      {med._count.orderItems} sales
-                    </Badge>
-                  </div>
-                ))}
+                  ))
+              ) : (
+                <EmptyState
+                  icon={Package2}
+                  title="No products yet"
+                  description="Your top sellers will appear here."
+                  size="sm"
+                />
+              )}
             </div>
           </CardContent>
         </Card>
@@ -252,47 +278,59 @@ export default function SellerDashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="relative overflow-x-auto rounded-md border">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 text-slate-600 uppercase text-xs">
-                <tr>
-                  <th className="px-6 py-3 font-semibold">Medicine</th>
-                  <th className="px-6 py-3 font-semibold">Generic Name</th>
-                  <th className="px-6 py-3 text-center font-semibold">
-                    Price (Full/Piece)
-                  </th>
-                  <th className="px-6 py-3 text-right font-semibold">
-                    Total Sold
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {stats.medicineStats.topSellingMedicines.map((med) => (
-                  <tr
-                    key={med.id}
-                    className="hover:bg-slate-50/50 transition-colors"
-                  >
-                    <td className="px-6 py-4 font-medium text-primary/70">
-                      {med.brandName}
-                    </td>
-                    <td className="px-6 py-4 text-muted-foreground italic">
-                      {med.genericName}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      ৳{med.price} /{" "}
-                      <span className="text-xs">৳{med.piecePrice}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="inline-flex items-center gap-2 font-bold">
-                        {med._count.orderItems}
-                        <TrendingUp className="h-3 w-3 text-emerald-500" />
-                      </div>
-                    </td>
+          {(stats.medicineStats?.topSellingMedicines ?? []).length > 0 ? (
+            <div className="relative overflow-x-auto rounded-md border">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-slate-50 text-slate-600 uppercase text-xs">
+                  <tr>
+                    <th className="px-6 py-3 font-semibold">Medicine</th>
+                    <th className="px-6 py-3 font-semibold">Generic Name</th>
+                    <th className="px-6 py-3 text-center font-semibold">
+                      Price (Full/Piece)
+                    </th>
+                    <th className="px-6 py-3 text-right font-semibold">
+                      Total Sold
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y">
+                  {(stats.medicineStats?.topSellingMedicines ?? []).map(
+                    (med) => (
+                      <tr
+                        key={med.id}
+                        className="hover:bg-slate-50/50 transition-colors"
+                      >
+                        <td className="px-6 py-4 font-medium text-primary">
+                          {med.brandName}
+                        </td>
+                        <td className="px-6 py-4 text-muted-foreground italic">
+                          {med.genericName}
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          ৳{med.price ?? 0} /{" "}
+                          <span className="text-xs">
+                            ৳{med.piecePrice ?? 0}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="inline-flex items-center gap-2 font-bold">
+                            {med._count?.orderItems ?? 0}
+                            <TrendingUp className="h-3 w-3 text-emerald-500" />
+                          </div>
+                        </td>
+                      </tr>
+                    ),
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <EmptyState
+              icon={Package2}
+              title="No Sales Data Available"
+              description="Your top selling medicines will appear here once orders start coming in."
+            />
+          )}
         </CardContent>
       </Card>
     </div>

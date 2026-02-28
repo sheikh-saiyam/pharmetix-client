@@ -4,12 +4,16 @@ import { getSession } from "@/lib/get-session";
 import { IUser } from "@/types/user.type";
 
 const ServerNavbar = async () => {
-  const { data: session } = await getSession();
-
-  const categories = await categoryService.getAll({ limit: 8 });
+  const [categories, session] = await Promise.all([
+    categoryService.getAll({ limit: 8 }),
+    getSession(),
+  ]);
 
   return (
-    <ClientNavbar categories={categories.data} user={session?.user as IUser} />
+    <ClientNavbar
+      categories={categories.data}
+      user={session?.data?.user as IUser}
+    />
   );
 };
 

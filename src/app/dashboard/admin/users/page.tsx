@@ -223,6 +223,12 @@ export default function UsersPage() {
             </div>
           </div>
         )}
+        emptyState={{
+          icon: Users,
+          title: "No users found",
+          description:
+            "No users match your current filters. Try adjusting your search or filters.",
+        }}
       />
     </div>
   );

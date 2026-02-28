@@ -227,6 +227,12 @@ export default function ManageOrdersPage() {
             </Popover>
           </div>
         )}
+        emptyState={{
+          icon: ShoppingBag,
+          title: "No orders found",
+          description:
+            "No orders match your current filters. Try adjusting your search or status filter.",
+        }}
       />
     </div>
   );

@@ -189,6 +189,12 @@ export default function CategoriesPage() {
           setSortBy(sortBy);
           setSortOrder(sortOrder);
         }}
+        emptyState={{
+          icon: Plus,
+          title: "No categories found",
+          description:
+            'No categories have been created yet. Click "Add Category" to create one.',
+        }}
       />
     </div>
   );

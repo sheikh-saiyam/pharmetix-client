@@ -25,6 +25,7 @@ import {
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { signOut } from "@/lib/auth-client";
 import { UserRole } from "@/types/user.type";
+import { toast } from "sonner";
 import {
   ChevronsUpDown,
   Home,
@@ -219,10 +220,11 @@ export function AppSidebar() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => {
+                  onClick={async () => {
                     router.push("/");
+                    toast.success("Logged out successfully");
+                    await signOut();
                     router.refresh();
-                    signOut();
                   }}
                   className="text-destructive cursor-pointer focus:bg-destructive/10 focus:text-destructive"
                 >

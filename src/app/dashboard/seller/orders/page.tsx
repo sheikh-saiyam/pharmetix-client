@@ -13,6 +13,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -27,9 +33,18 @@ import { IOrderItem, OrderItemStatus } from "@/features/order/order.type";
 import useDebounce from "@/hooks/use-debounce";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { ClipboardList, Eye, MapPin, Package, User } from "lucide-react";
+import {
+  ClipboardList,
+  Eye,
+  Filter,
+  MapPin,
+  Package,
+  User,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
+const STATUS_OPTIONS = Object.values(OrderItemStatus);
 
 export default function SellerOrdersPage() {
   const [page, setPage] = useState(1);
@@ -62,8 +77,6 @@ export default function SellerOrdersPage() {
     setSelectedItem(item);
     setDetailsOpen(true);
   };
-
-  const statusOptions = Object.values(OrderItemStatus);
 
   const columns: ColumnDef<IOrderItem>[] = [
     {
@@ -167,7 +180,7 @@ export default function SellerOrdersPage() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              {statusOptions.map((opt) => (
+              {STATUS_OPTIONS.map((opt) => (
                 <SelectItem
                   key={`order-item-status-00-${opt}`}
                   value={opt}
@@ -207,27 +220,62 @@ export default function SellerOrdersPage() {
         }}
         renderTopContent={() => (
           <div className="flex items-center gap-2">
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="w-[180px] text-xs font-medium">
-                <SelectValue placeholder="Filter by Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL" className="text-xs font-medium">
-                  All Status
-                </SelectItem>
-                {statusOptions.map((opt) => (
-                  <SelectItem
-                    key={`order-item-status-1-${opt}`}
-                    value={opt}
-                    className="text-xs font-medium"
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 flex gap-2 text-xs font-medium"
+                >
+                  <Filter className="h-3 w-3" />
+                  Status
+                  {status && status !== "ALL" && (
+                    <Badge
+                      variant={getStatusVariant(status).variant}
+                      className="px-1.5 font-medium"
+                    >
+                      {status}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-2" align="start">
+                <div className="space-y-1">
+                  <div
+                    className="flex items-center space-x-2 p-2 hover:bg-slate-100 rounded-md cursor-pointer"
+                    onClick={() => setStatus("ALL")}
                   >
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                    <Checkbox checked={!status || status === "ALL"} />
+                    <label className="text-xs font-medium leading-none cursor-pointer">
+                      All Status
+                    </label>
+                  </div>
+                  <hr />
+                  {STATUS_OPTIONS.map((opt) => (
+                    <div
+                      key={opt}
+                      className="flex items-center space-x-2 p-2 hover:bg-slate-100 rounded-md cursor-pointer"
+                      onClick={() =>
+                        setStatus((prev) => (prev === opt ? "ALL" : opt))
+                      }
+                    >
+                      <Checkbox checked={status === opt} />
+                      <label className="text-xs font-medium leading-none cursor-pointer">
+                        {opt}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         )}
+        emptyState={{
+          icon: ClipboardList,
+          title: "No orders found",
+          description:
+            "You haven't received any orders yet. Orders will appear here once customers place them.",
+        }}
       />
 
       {/* Details Dialog */}

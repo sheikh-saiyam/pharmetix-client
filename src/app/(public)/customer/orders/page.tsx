@@ -105,6 +105,12 @@ export default function MyOrdersPage() {
         onLimitChange={setLimit}
         onSort={handleSort}
         isLoading={isLoading}
+        emptyState={{
+          icon: ShoppingBag,
+          title: "No orders yet",
+          description:
+            "You haven't placed any orders. Start shopping to see your orders here.",
+        }}
       />
     </div>
   );

@@ -51,14 +51,10 @@ const ClientNavbar = ({
   const { items } = useCartStore();
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          toast.success("Logged out successfully");
-          router.refresh();
-        },
-      },
-    });
+    toast.success("Logged out successfully");
+    await authClient.signOut();
+    router.push("/");
+    router.refresh();
   };
 
   return (

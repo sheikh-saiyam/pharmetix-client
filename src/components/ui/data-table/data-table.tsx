@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import * as React from "react";
+import { Inbox, LucideIcon } from "lucide-react";
 
 import {
   Table,
@@ -26,8 +27,15 @@ import {
 } from "@/components/ui/table";
 import { IMeta } from "@/types/index.type";
 import { DataTablePagination } from "./data-table-pagination";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
+
+interface DataTableEmptyState {
+  icon?: LucideIcon;
+  title?: string;
+  description?: string;
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,10 +43,12 @@ interface DataTableProps<TData, TValue> {
   meta?: IMeta;
   onPageChange?: (page: number) => void;
   onLimitChange?: (limit: number) => void;
-  onSearch?: (search: string) => void; // Optional search handler
+  onSearch?: (search: string) => void;
   onSort?: (sortBy: string, sortOrder: "asc" | "desc") => void;
   isLoading?: boolean;
   renderTopContent?: () => React.ReactNode;
+  /** Custom empty state displayed when data is empty and not loading */
+  emptyState?: DataTableEmptyState;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,6 +61,7 @@ export function DataTable<TData, TValue>({
   onSort,
   isLoading,
   renderTopContent,
+  emptyState,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -180,12 +191,16 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={columns.length} className="p-0">
+                  <EmptyState
+                    icon={emptyState?.icon ?? Inbox}
+                    title={emptyState?.title ?? "No results found"}
+                    description={
+                      emptyState?.description ??
+                      "There are no records to display at the moment."
+                    }
+                  />
                 </TableCell>
               </TableRow>
             )}

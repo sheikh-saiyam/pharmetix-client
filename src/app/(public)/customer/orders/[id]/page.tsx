@@ -331,6 +331,11 @@ export default function OrderDetailsPage() {
                 columns={columns}
                 data={order.orderItems}
                 isLoading={false}
+                emptyState={{
+                  icon: ShoppingBag,
+                  title: "No items in this order",
+                  description: "This order has no items.",
+                }}
               />
               <div className="p-8 bg-slate-50/30 border-t border-slate-100">
                 <div className="flex flex-col items-end space-y-3">

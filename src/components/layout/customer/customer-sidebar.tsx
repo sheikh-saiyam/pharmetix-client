@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { IUser } from "@/types/user.type";
 import {
   FileText,
-  Heart,
   Lock,
   ShieldCheck,
   ShoppingBag,
@@ -13,7 +13,6 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { IUser } from "@/types/user.type";
 
 const sidebarItems = [
   {
@@ -30,11 +29,6 @@ const sidebarItems = [
     title: "My Cart",
     href: "/cart",
     icon: ShoppingBag,
-  },
-  {
-    title: "Wishlists",
-    href: "/customer/wishlists",
-    icon: Heart,
   },
   {
     title: "Health Tips",
