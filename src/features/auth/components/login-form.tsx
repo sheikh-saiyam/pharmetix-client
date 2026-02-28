@@ -40,9 +40,9 @@ export default function LoginForm() {
     },
   });
 
-  const quickLogin = (email: string) => {
+  const quickLogin = (email: string, password: string) => {
     form.setValue("email", email);
-    form.setValue("password", "password123");
+    form.setValue("password", password);
   };
 
   async function onSubmit(values: LoginSchema) {
@@ -94,7 +94,9 @@ export default function LoginForm() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
-                onClick={() => quickLogin("customer@pharmetix.com")}
+                onClick={() =>
+                  quickLogin("firstuser@gmail.com", "user@password1")
+                }
                 className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
               >
                 <User className="w-4 h-4 text-slate-400 group-hover:text-primary" />
@@ -104,7 +106,9 @@ export default function LoginForm() {
               </button>
               <button
                 type="button"
-                onClick={() => quickLogin("seller@pharmetix.com")}
+                onClick={() =>
+                  quickLogin("firstseller@gmail.com", "seller@password1")
+                }
                 className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
               >
                 <Store className="w-4 h-4 text-slate-400 group-hover:text-primary" />
@@ -114,7 +118,12 @@ export default function LoginForm() {
               </button>
               <button
                 type="button"
-                onClick={() => quickLogin("admin@pharmetix.com")}
+                onClick={() =>
+                  quickLogin(
+                    "system-admin@pharmetix.com",
+                    "SystemAdmin@pharmetix#password",
+                  )
+                }
                 className="flex flex-col items-center justify-center p-2 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-primary/5 hover:border-primary/30 transition-all gap-1 group"
               >
                 <ShieldCheck className="w-4 h-4 text-slate-400 group-hover:text-primary" />
