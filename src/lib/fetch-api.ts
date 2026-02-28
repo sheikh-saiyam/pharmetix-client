@@ -17,7 +17,12 @@ export const fetchApi = async <T = unknown>(
   // Append query parameters
   let fullPath = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
   if (params) {
-    const searchParams = new URL(fullPath, baseUrl).searchParams;
+    // Use a dummy base URL on the client (where baseUrl is "") because
+    // new URL() requires an absolute base when the path is relative.
+    // This is only used to build the query string — the actual request
+    // still uses a relative path on the client.
+    const safeBase = baseUrl || "http://localhost";
+    const searchParams = new URL(fullPath, safeBase).searchParams;
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined) {
         searchParams.append(key, String(value));
