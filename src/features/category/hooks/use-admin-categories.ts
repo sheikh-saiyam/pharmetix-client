@@ -8,7 +8,7 @@ export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: { name: string; image?: string }) => {
-      return fetchApi("/categories", {
+      return fetchApi("/api/v1/categories", {
         method: "POST",
         body: JSON.stringify(payload),
       });
@@ -35,7 +35,7 @@ export const useUpdateCategory = () => {
       id: string;
       payload: { name?: string; image?: string };
     }) => {
-      return fetchApi(`/categories/${id}`, {
+      return fetchApi(`/api/v1/categories/${id}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
@@ -56,7 +56,7 @@ export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      return fetchApi(`/categories/${id}`, {
+      return fetchApi(`/api/v1/categories/${id}`, {
         method: "DELETE",
       });
     },
