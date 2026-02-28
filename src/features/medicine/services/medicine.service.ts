@@ -30,7 +30,7 @@ export const medicineService = {
   },
 
   create: async (payload: Partial<IMedicine>) => {
-    return fetchApi<IMedicine>("/api/v1/seller/medicines", {
+    return fetchApi<IMedicine>("/api/v1/medicines", {
       method: "POST",
       body: JSON.stringify(payload),
     });
